@@ -1,6 +1,7 @@
 package com.And1sS.game.Rebuild;
 
 import com.And1sS.game.Rebuild.GameObjects.GameObject;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -43,8 +44,10 @@ public class Level {
             GameObject object = objects.get(i);
 
             object.update(deltaTime, this);
+            object.updateAnimation(deltaTime);
             object.setOffsetX(player.getOffsetX());
 
+            object.performObjectCollisionDetection(player);
             if (object.shouldBeDisposed()) {
                 objects.remove(i--);
             }
@@ -185,6 +188,15 @@ public class Level {
         }
 
         return tileTextureRegion;
+    }
+
+    public void recalculateObjectsBounds(int newWidth, int newHeight) {
+        int oldCellSize = cellSize;
+        cellSize = newHeight / mapHeight;
+
+        for (GameObject object : objects) {
+            object.recalculateBounds(oldCellSize, cellSize);
+        }
     }
 }
 

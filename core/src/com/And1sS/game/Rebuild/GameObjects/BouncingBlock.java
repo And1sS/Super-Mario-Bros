@@ -3,6 +3,7 @@ package com.And1sS.game.Rebuild.GameObjects;
 import com.And1sS.game.Rebuild.Animation;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotLevelCollidable;
+import com.And1sS.game.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
 import com.And1sS.game.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +25,7 @@ public class BouncingBlock extends GameObject {
         levelCollisionDetector = new NotLevelCollidable();
         objectCollisionDetector = new NotGameObjectCollidable();
         updater = new BouncingBlockUpdater();
+        animationUpdater = new NotUpdatableAnimation();
         renderer = new DefaultObjectRenderer();
 
         velocityX = 0;

@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;

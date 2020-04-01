@@ -4,6 +4,7 @@ import com.And1sS.game.Rebuild.GameObjects.GameObject;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotUpdatable;
+import com.And1sS.game.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
 import com.badlogic.gdx.math.Rectangle;
 
 public class BackgroundObject extends GameObject {
@@ -15,5 +16,6 @@ public class BackgroundObject extends GameObject {
         updater = new NotUpdatable();
         levelCollisionDetector = new NotLevelCollidable();
         objectCollisionDetector = new NotGameObjectCollidable();
+        animationUpdater = new NotUpdatableAnimation();
     }
 }

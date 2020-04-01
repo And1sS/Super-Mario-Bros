@@ -1,17 +1,19 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import java.util.*;
+
+import com.And1sS.game.OldVersion.Anim;
 import com.badlogic.gdx.graphics.g2d.*;
 
 public class AnimManager {
-	private List <Anim> animations;
+	private List <com.And1sS.game.OldVersion.Anim> animations;
 
 	public AnimManager() {
 		animations = new ArrayList();
 	}
 
 	public void update() {
-		for(Anim animation : animations) {
+		for(com.And1sS.game.OldVersion.Anim animation : animations) {
 			if(animation.shouldBeDisposed() || !animation.isLoadedSucessful()) {
 				animations.remove(animation);
 				continue;
@@ -21,7 +23,7 @@ public class AnimManager {
 		}
 	}
 
-	public void add(Anim animation) {
+	public void add(com.And1sS.game.OldVersion.Anim animation) {
 		animations.add(animation);
 	}
 

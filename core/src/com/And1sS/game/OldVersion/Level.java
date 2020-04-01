@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import com.And1sS.game.Rebuild.TileId;
 import com.badlogic.gdx.Gdx;
@@ -27,7 +27,7 @@ public class Level {
 	private TextureRegion currentTile;
 
 	List <TextureBody> sprites;
-	List <Anim> animations;
+	List <com.And1sS.game.OldVersion.Anim> animations;
 
 	private EnemyManager enemies;
 
@@ -93,7 +93,7 @@ public class Level {
 
 		// animated sprites
 		for(int i = 0; i < animations.size(); i++) {
-			Anim animation = animations.get(i);
+			com.And1sS.game.OldVersion.Anim animation = animations.get(i);
 
 			animation.update();
 			batch.draw(animation.getCurrentRegion(), animation.getX() - offsetX, animation.getY(),

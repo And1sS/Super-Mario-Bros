@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import java.util.*;
 import com.badlogic.gdx.graphics.g2d.*;

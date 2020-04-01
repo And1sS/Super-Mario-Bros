@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 public class LifeMushroom extends Enemy {
 

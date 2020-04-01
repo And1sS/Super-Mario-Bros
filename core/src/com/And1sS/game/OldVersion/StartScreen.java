@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -21,7 +21,7 @@ public class StartScreen implements Screen {
 
 	private GlyphLayout glyphLayout;
 
-	private Button startButton;
+	private com.And1sS.game.OldVersion.Button startButton;
 
 	public StartScreen(Game game) {
 		this.game = game;

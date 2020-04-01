@@ -11,10 +11,13 @@ public class Player extends GameObject {
     public enum PlayerType {
         MARIO, SUPER_MARIO, FIRE_MARIO, INVINCIBLE_MARIO
     }
+
     private PlayerType playerType = PlayerType.MARIO;
 
     private int score = 0;
     private int lives = 3;
+
+    private int defaultMarioHeight;
 
     private boolean alive = true;
 
@@ -23,17 +26,27 @@ public class Player extends GameObject {
         this.x = x;
         this.y = y;
 
-        animation = new Animation("images/mario.png", 3, 81, 32, 16, 16, 0, true);
+        defaultMarioHeight = (int) height;
+        defaultMario();
 
         updater = new PlayerUpdater();
+        animationUpdater = new PlayerAnimationUpdater();
         levelCollisionDetector = new PlayerCollider();
         renderer = new PlayerRenderer();
     }
 
     public void die() {
-        velocityY = -2100 * Gdx.graphics.getHeight() / 1080.0f;
+        velocityY = -25 * defaultMarioHeight;
 
         alive = false;
+    }
+
+    public void resetPowerUps() {
+        if (playerType == PlayerType.MARIO) {
+            die();
+        } else {
+            invincibleMario();
+        }
     }
 
     public void moveLeft() {
@@ -45,12 +58,30 @@ public class Player extends GameObject {
     }
 
     public void jump() {
-       if (Math.abs(velocityY) == 0) {
-           velocityY = -1500 * Gdx.graphics.getHeight() / 1080.0f;
-       }
+        velocityY = -20 * defaultMarioHeight;
     }
 
-    public void superMario(Level level) {
+    public void smallJump() {
+        velocityY = -15 * defaultMarioHeight;
+    }
+
+    public void invincibleMario() {
+        defaultMario();
+        playerType = PlayerType.INVINCIBLE_MARIO;
+    }
+
+    public void defaultMario() {
+        playerType = PlayerType.MARIO;
+
+        animation = new Animation("images/mario.png", 3, 81, 32, 16, 16, 0, true);
+        if (bounds.getHeight() == 2 * defaultMarioHeight) {
+            y += defaultMarioHeight;
+        }
+        bounds.setY((float) y);
+        bounds.setHeight(defaultMarioHeight);
+    }
+
+    public void superMario() {
         if(playerType == PlayerType.MARIO) {
             playerType = PlayerType.SUPER_MARIO;
 
@@ -58,8 +89,8 @@ public class Player extends GameObject {
             animation.setTextureHeight(31);
 
             velocityX = 0;
-            bounds.setHeight(2 * level.getCellSize());
-            y -= level.getCellSize();
+            bounds.setHeight(2 * defaultMarioHeight);
+            y -= defaultMarioHeight;
             bounds.setY((float) y);
 
             score += 100;
@@ -70,7 +101,7 @@ public class Player extends GameObject {
 
     public Rectangle getBounds() { return bounds; }
 
-    private class PlayerUpdater implements GameObject.IUpdatable {
+    private class PlayerUpdater implements IUpdatable {
 
         float invincibilityTimer = 3;
 
@@ -123,12 +154,13 @@ public class Player extends GameObject {
                    offsetX = x - screenCenterX;
                }
 
-               manageAnimation();
-               animation.update(deltaTime);
-
                if (playerType == PlayerType.INVINCIBLE_MARIO) {
                    updateInvincibilityTimer();
                }
+           } else {
+               velocityY += Level.GRAVITATIONAL_ACCELERATION * deltaTime;
+               y += velocityY * deltaTime;
+               bounds.setY((float) y);
            }
         }
 
@@ -138,26 +170,7 @@ public class Player extends GameObject {
             if(invincibilityTimer <= 0) {
                 invincibilityTimer = 3;
 
-                playerType = PlayerType.MARIO;
-            }
-        }
-
-        private void manageAnimation() {
-            if(!alive) {
-                animation.setTextureX(176);
-                animation.setSpeed(0);
-                animation.setCurrentFrame(0);
-            } else if (Math.abs(velocityY) > 0.001) {
-                animation.setTextureX(160);
-                animation.setSpeed(0);
-                animation.setCurrentFrame(0);
-            } else if (Math.abs(velocityX + velocityY) <= 0.001) {
-                animation.setTextureX(80);
-                animation.setSpeed(0);
-                animation.setCurrentFrame(0);
-            } else if(Math.abs(velocityX) > 0.001 && Math.abs(velocityY) <= 0.001) {
-                animation.setTextureX(96);
-                animation.setSpeed(7);
+                defaultMario();
             }
         }
     }
@@ -256,7 +269,7 @@ public class Player extends GameObject {
                             if (y >= (i + 1) * cellSize) {
                                 level.setCell(j, i, 0);
                                 level.addObject(new BouncingBrownIronBlock(j, i, cellSize));
-                                superMario(level);
+                                superMario();
                             }
                             break;
 
@@ -285,7 +298,7 @@ public class Player extends GameObject {
         }
     }
 
-    private class PlayerRenderer implements GameObject.IRenderable {
+    private class PlayerRenderer implements IRenderable {
 
         @Override
         public void render(SpriteBatch spriteBatch) {
@@ -312,6 +325,34 @@ public class Player extends GameObject {
                         (float) (x - offsetX),
                         (float) (windowHeight - y - bounds.getHeight()),
                         bounds.getWidth() * 1.1f, bounds.getHeight());
+            }
+        }
+    }
+
+    private class PlayerAnimationUpdater implements IAnimationUpdatable {
+
+        @Override
+        public void updateAnimation(float deltaTime) {
+            manageAnimation();
+            animation.update(deltaTime);
+        }
+
+        private void manageAnimation() {
+            if(!alive) {                                            // Died
+                animation.setTextureX(176);
+                animation.setSpeed(0);
+                animation.setCurrentFrame(0);
+            } else if (Math.abs(velocityY) > 0.001) {              // flying
+                animation.setTextureX(160);
+                animation.setSpeed(0);
+                animation.setCurrentFrame(0);
+            } else if (Math.abs(velocityX + velocityY) <= 0.001) { // Staying
+                animation.setTextureX(80);
+                animation.setSpeed(0);
+                animation.setCurrentFrame(0);
+            } else if(Math.abs(velocityX) > 0.001 && Math.abs(velocityY) <= 10) { // Running
+                animation.setTextureX(96);
+                animation.setSpeed(7);
             }
         }
     }

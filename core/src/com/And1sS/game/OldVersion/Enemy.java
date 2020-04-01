@@ -1,10 +1,10 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.*;
 
 public class Enemy {
-	private Anim animation;
+	private com.And1sS.game.OldVersion.Anim animation;
 
 	private RigidBody body;
 
@@ -15,7 +15,7 @@ public class Enemy {
 	
 	private float timer = 2;
 
-	public Enemy(float x, float y, float width, float height, Anim animation) {
+	public Enemy(float x, float y, float width, float height, com.And1sS.game.OldVersion.Anim animation) {
 		this.animation = animation;
 
 		body = new RigidBody(x, y, width, height);

@@ -1,6 +1,5 @@
 
-package com.And1sS.game;
-import com.badlogic.gdx.graphics.*;
+package com.And1sS.game.OldVersion;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.*;
 
@@ -10,7 +9,7 @@ public class Bullet {
 	
 	private RigidBody body;
 	
-	private Anim animation;
+	private com.And1sS.game.OldVersion.Anim animation;
 	
 	private boolean died;
 	

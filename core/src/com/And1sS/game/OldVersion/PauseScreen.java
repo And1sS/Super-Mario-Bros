@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.*;
@@ -14,10 +14,10 @@ public class PauseScreen implements Screen
 	
 	private Texture buttonAtlas;
 	
-	private Button resumeButton;
-	private Button restartButton;
-	private Button mainMenuButton;
-	private Button exitButton;
+	private com.And1sS.game.OldVersion.Button resumeButton;
+	private com.And1sS.game.OldVersion.Button restartButton;
+	private com.And1sS.game.OldVersion.Button mainMenuButton;
+	private com.And1sS.game.OldVersion.Button exitButton;
 	
 	public PauseScreen(Game game, GameScreen gameScreen) {
 		this.game = game;
@@ -27,21 +27,21 @@ public class PauseScreen implements Screen
 		
 		buttonAtlas = new Texture(Gdx.files.internal("images/pauseMenu.png"));
 		
-		resumeButton = new Button(buttonAtlas,
+		resumeButton = new com.And1sS.game.OldVersion.Button(buttonAtlas,
 		                        new Rectangle(new Rectangle(Gdx.graphics.getWidth() / 9, 
 								              2 * Gdx.graphics.getHeight() / 3 - Gdx.graphics.getWidth() / 36, 
 											  Gdx.graphics.getWidth() / 3, 
 											  Gdx.graphics.getWidth() / 12)), 
 		                        new Rectangle(0, 0, 134, 31));
 								
-	    restartButton = new Button(buttonAtlas,
+	    restartButton = new com.And1sS.game.OldVersion.Button(buttonAtlas,
 								   new Rectangle(new Rectangle(5 * Gdx.graphics.getWidth() / 9, 
 															   2 * Gdx.graphics.getHeight() / 3 - Gdx.graphics.getWidth() / 36, 
 															   Gdx.graphics.getWidth() / 3, 
 															   Gdx.graphics.getWidth() / 12)), 
 								   new Rectangle(0, 31, 134, 31));
 							
-		mainMenuButton = new Button(buttonAtlas,
+		mainMenuButton = new com.And1sS.game.OldVersion.Button(buttonAtlas,
 									new Rectangle(new Rectangle(Gdx.graphics.getWidth() / 9, 
 																Gdx.graphics.getHeight() / 3 - Gdx.graphics.getWidth() / 18, 
 																Gdx.graphics.getWidth() / 3, 

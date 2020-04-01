@@ -1,5 +1,6 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
+import com.And1sS.game.OldVersion.Button;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -9,11 +10,11 @@ import com.badlogic.gdx.math.*;
 public class OnScreenController {
 	private Texture buttonAtlas;
 
-	private Button leftButton;
-	private Button rightButton;
-	private Button bButton;
-	private Button shootButton;
-	private Button pauseButton;
+	private com.And1sS.game.OldVersion.Button leftButton;
+	private com.And1sS.game.OldVersion.Button rightButton;
+	private com.And1sS.game.OldVersion.Button bButton;
+	private com.And1sS.game.OldVersion.Button shootButton;
+	private com.And1sS.game.OldVersion.Button pauseButton;
 
 	private int buttonWidth;
 	private int buttonHeight;
@@ -25,10 +26,10 @@ public class OnScreenController {
 		buttonWidth = Gdx.graphics.getWidth() / 10;
 		buttonHeight = buttonWidth;
 
-		leftButton = new Button(buttonAtlas, new Rectangle(buttonWidth / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(0, 0, 512, 512));
-		rightButton = new Button(buttonAtlas, new Rectangle(6 * buttonWidth / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(512, 0, -512, 512));
-		bButton = new Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 5 / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(512, 0, 512, 512));
-	    shootButton = new Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 10 / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(1536, 0, 512, 512));
+		leftButton = new com.And1sS.game.OldVersion.Button(buttonAtlas, new Rectangle(buttonWidth / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(0, 0, 512, 512));
+		rightButton = new com.And1sS.game.OldVersion.Button(buttonAtlas, new Rectangle(6 * buttonWidth / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(512, 0, -512, 512));
+		bButton = new com.And1sS.game.OldVersion.Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 5 / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(512, 0, 512, 512));
+	    shootButton = new com.And1sS.game.OldVersion.Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 10 / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(1536, 0, 512, 512));
 		pauseButton = new Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 2 / 3, Gdx.graphics.getHeight() - buttonHeight * 2 / 3, buttonWidth * 2 / 3, buttonHeight * 2 / 3), new Rectangle(1024, 0, 512, 512));
 	}
 

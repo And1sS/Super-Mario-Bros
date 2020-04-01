@@ -1,4 +1,4 @@
-package com.And1sS.game;
+package com.And1sS.game.OldVersion;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -7,11 +7,11 @@ import java.util.*;
 
 
 public class Player {
-	private Anim animation;
+	private com.And1sS.game.OldVersion.Anim animation;
 
 	private RigidBody playerBody;
 	
-	private ArrayList<Bullet> bullets;
+	private ArrayList<com.And1sS.game.OldVersion.Bullet> bullets;
 
 	private boolean movingLeft;
 	private boolean died;
@@ -29,11 +29,11 @@ public class Player {
 	private int score;
 
 	public Player(String fileName, float x, float y, int width, int height) {
-		animation = new Anim(fileName, 3, 81, 32, 16, 16, -1, -1, -1, -1, (double)10 , true);
+		animation = new com.And1sS.game.OldVersion.Anim(fileName, 3, 81, 32, 16, 16, -1, -1, -1, -1, (double)10 , true);
 
 		playerBody = new RigidBody(x, y, width, height);
 
-		bullets = new ArrayList<Bullet>();
+		bullets = new ArrayList<com.And1sS.game.OldVersion.Bullet>();
 		
 		type = MarioType.MARIO;
 
@@ -194,7 +194,7 @@ public class Player {
 									if(level.getCell(j, i) == 20) level.setCell(j, i, 21);
 									else level.setCell(j, i, 0);
 
-									Anim temp = new Anim("images/objects.png", 4, 0, 96, 16, 16, j * level.getCellSize(), (Gdx.graphics.getHeight() - i * level.getCellSize()), level.getCellSize(), level.getCellSize(), (double)10 , false);
+									com.And1sS.game.OldVersion.Anim temp = new com.And1sS.game.OldVersion.Anim("images/objects.png", 4, 0, 96, 16, 16, j * level.getCellSize(), (Gdx.graphics.getHeight() - i * level.getCellSize()), level.getCellSize(), level.getCellSize(), (double)10 , false);
 									temp.setSpeedY(600 * Gdx.graphics.getHeight() / 1080);
 
 									level.addAnim(temp);
@@ -334,7 +334,7 @@ public class Player {
 
 	public void setScore(int score) { this.score = score; }
 
-	public void setAnim(Anim animation) { this.animation = animation; }
+	public void setAnim(com.And1sS.game.OldVersion.Anim animation) { this.animation = animation; }
 
 	public void startLowInvincibility() { lowInvincibility = true; }
 
@@ -356,7 +356,7 @@ public class Player {
 		if(type != MarioType.FIRE_MARIO)
 			return;
 			
-		Bullet bullet = new Bullet((float) (playerBody.getX() + playerBody.getWidth() - level.getCellSize()  / 2), (float) (playerBody.getY() + playerBody.getHeight() / 2), level.getCellSize() / 2, level.getCellSize() / 2);
+		com.And1sS.game.OldVersion.Bullet bullet = new com.And1sS.game.OldVersion.Bullet((float) (playerBody.getX() + playerBody.getWidth() - level.getCellSize()  / 2), (float) (playerBody.getY() + playerBody.getHeight() / 2), level.getCellSize() / 2, level.getCellSize() / 2);
 		
 		if(movingLeft) {
 			bullet.getBody().setVelocityX(-600 * Gdx.graphics.getWidth() / 1920.0f);

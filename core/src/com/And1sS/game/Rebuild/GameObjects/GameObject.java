@@ -2,6 +2,7 @@ package com.And1sS.game.Rebuild.GameObjects;
 
 import com.And1sS.game.Rebuild.Animation;
 import com.And1sS.game.Rebuild.Level;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -24,8 +25,10 @@ public class GameObject {
     protected IRenderable renderer;
     protected ILevelCollidable levelCollisionDetector;
     protected IGameObjectCollidable objectCollisionDetector;
+    protected IAnimationUpdatable animationUpdater;
 
-    public GameObject() {}
+    public GameObject() {
+    }
 
     public GameObject(Rectangle bounds, Animation animation) {
         this.bounds = bounds;
@@ -33,6 +36,16 @@ public class GameObject {
         this.y = bounds.getY();
 
         this.animation = animation;
+    }
+
+    public void recalculateBounds(int oldCellSize, int newCellSize) {
+        x = x / oldCellSize * newCellSize;
+        y = y / oldCellSize * newCellSize;
+
+        float newWidth = bounds.getWidth() / oldCellSize * newCellSize;
+        float newHeight = bounds.getHeight() / oldCellSize * newCellSize;
+
+        bounds.set((float) x, (float) y,  newWidth, newHeight);
     }
 
     public void dispose() { shouldBeDisposed = true; }
@@ -69,6 +82,10 @@ public class GameObject {
         updater.update(deltaTime, level);
     }
 
+    public void updateAnimation(float deltaTime) {
+        animationUpdater.updateAnimation(deltaTime);
+    }
+
     public void render(SpriteBatch spriteBatch) {
         renderer.render(spriteBatch);
     }
@@ -102,15 +119,54 @@ public class GameObject {
         void render(SpriteBatch sp);
     }
 
-    public class DefaultObjectRenderer implements GameObject.IRenderable {
+    public interface IAnimationUpdatable {
+        void updateAnimation(float deltaTime);
+    }
+
+    public class DefaultObjectRenderer implements IRenderable {
 
         @Override
         public void render(SpriteBatch spriteBatch) {
-            spriteBatch.draw(animation.getCurrentRegion(),
-                    bounds.getX() - (float) offsetX,
-                    bounds.getY(),
-                    bounds.getWidth(), bounds.getHeight());
+            if (flipAnimationXAxis) {
+                spriteBatch.draw(animation.getCurrentRegion(),
+                        (float) (x + bounds.getWidth() -  offsetX),
+                        (float) y,
+                        -bounds.getWidth(), bounds.getHeight());
+            } else {
+                spriteBatch.draw(animation.getCurrentRegion(),
+                        (float) (x - offsetX),
+                        (float) y,
+                        bounds.getWidth(), bounds.getHeight());
+            }
         }
 
+    }
+
+    public class ReversedObjectRenderer implements IRenderable {
+
+        @Override
+        public void render(SpriteBatch spriteBatch) {
+            float windowHeight = Gdx.graphics.getHeight();
+            if (flipAnimationXAxis) {
+                spriteBatch.draw(animation.getCurrentRegion(),
+                        (float) (x + bounds.getWidth() -  offsetX),
+                        (float) (windowHeight - y - bounds.getHeight()),
+                        -bounds.getWidth() * 1.1f, bounds.getHeight());
+            } else {
+                spriteBatch.draw(animation.getCurrentRegion(),
+                        (float) (x - offsetX),
+                        (float) (windowHeight - y - bounds.getHeight()),
+                        bounds.getWidth() * 1.1f, bounds.getHeight());
+            }
+        }
+
+    }
+
+    public class DefaultAnimationUpdater implements IAnimationUpdatable {
+
+        @Override
+        public void updateAnimation(float deltaTime) {
+            animation.update(deltaTime);
+        }
     }
 }

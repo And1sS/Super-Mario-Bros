@@ -4,6 +4,7 @@ import com.And1sS.game.Rebuild.Animation;
 import com.And1sS.game.Rebuild.GameObjects.GameObject;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotLevelCollidable;
+import com.And1sS.game.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
 import com.And1sS.game.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -21,37 +22,38 @@ public class BrokenBrick extends GameObject {
 
     public BrokenBrick(int mapIndxX, int mapIndxY, float size) {
         this(mapIndxX * size, Gdx.graphics.getHeight() - mapIndxY * size,
-                size, size);
+                size);
     }
 
-    public BrokenBrick(float x, float y, float width, float height) {
-        super(new Rectangle(x, y, width, height),
+    private BrokenBrick(float x, float y, float cellSize) {
+        super(new Rectangle(x, y, cellSize, cellSize),
                 new Animation("images/objects.png", 64, 16, 16, 16));
 
         parts = new ArrayList<>();
-        parts.add(new GameObject(new Rectangle(x, y, width, height),
+        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
                 new Animation("images/objects.png", 64, 16, 16, 16)));
-        parts.add(new GameObject(new Rectangle(x, y, width, height),
+        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
                 new Animation("images/objects.png", 64, 16, 16, 16)));
-        parts.add(new GameObject(new Rectangle(x, y, width, height),
+        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
                 new Animation("images/objects.png", 64, 16, 16, 16)));
-        parts.add(new GameObject(new Rectangle(x, y, width, height),
+        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
                 new Animation("images/objects.png", 64, 16, 16, 16)));
 
         // 0, 1 - going left, rotating left; 2, 3 - opposite
 
-        parts.get(0).setVelocityY(80 * Gdx.graphics.getHeight() / 1080.0f);
-        parts.get(1).setVelocityY(1300 * Gdx.graphics.getHeight() / 1080.0f);
-        parts.get(2).setVelocityY(1300 * Gdx.graphics.getHeight() / 1080.0f);
-        parts.get(3).setVelocityY(80 * Gdx.graphics.getHeight() / 1080.0f);
+        parts.get(0).setVelocityY(5 * cellSize);
+        parts.get(1).setVelocityY(18 * cellSize);
+        parts.get(2).setVelocityY(18 * cellSize);
+        parts.get(3).setVelocityY(5 * cellSize);
 
-        parts.get(0).setVelocityX(-500 * Gdx.graphics.getHeight() / 1080.0f);
-        parts.get(1).setVelocityX(-500 * Gdx.graphics.getHeight() / 1080.0f);
-        parts.get(2).setVelocityX(500 * Gdx.graphics.getHeight() / 1080.0f);
-        parts.get(3).setVelocityX(500 * Gdx.graphics.getHeight() / 1080.0f);
+        parts.get(0).setVelocityX(-10 * cellSize);
+        parts.get(1).setVelocityX(-10 * cellSize);
+        parts.get(2).setVelocityX(10 * cellSize);
+        parts.get(3).setVelocityX(10 * cellSize);
 
         renderer = new BreakingBricksRenderer();
         updater = new BreakingBricksUpdater();
+        animationUpdater = new NotUpdatableAnimation();
         levelCollisionDetector = new NotLevelCollidable();
         objectCollisionDetector = new NotGameObjectCollidable();
     }
