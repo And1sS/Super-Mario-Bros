@@ -1,7 +1,10 @@
 package com.And1sS.game.Rebuild;
 
 import com.And1sS.game.OldVersion.OnScreenController;
+import com.And1sS.game.Rebuild.GameObjects.CoopaTroopa;
+import com.And1sS.game.Rebuild.GameObjects.GameObject;
 import com.And1sS.game.Rebuild.GameObjects.Goomba;
+import com.And1sS.game.Rebuild.GameObjects.Mushroom;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -23,7 +26,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         level = Level.loadFromFile("levels/level1.lvl", "images/map.png");
         player = new Player(100, 0, 0.85f * level.getCellSize(), level.getCellSize());
-        level.addObject(new Goomba(14, 12, level.getCellSize()));
+        level.addObject(new CoopaTroopa(14, 12, level.getCellSize()));
         controller = new OnScreenController();
     }
 

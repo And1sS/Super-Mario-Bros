@@ -1,7 +1,6 @@
 package com.And1sS.game.Rebuild;
 
 import com.And1sS.game.Rebuild.GameObjects.GameObject;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -42,6 +41,8 @@ public class Level {
     public void update(float deltaTime, Player player) {
         for (int i = 0; i < objects.size(); i++) {
             GameObject object = objects.get(i);
+            if (Math.abs(object.getX() - player.getX()) > Gdx.graphics.getWidth())
+                continue;
 
             object.update(deltaTime, this);
             object.updateAnimation(deltaTime);
@@ -81,6 +82,8 @@ public class Level {
         }
 
         for (GameObject object : objects) {
+            if (Math.abs(object.getX() - player.getX()) > Gdx.graphics.getWidth())
+                continue;
             object.render(spriteBatch);
         }
     }
@@ -160,8 +163,12 @@ public class Level {
         TextureRegion tileTextureRegion = new TextureRegion(tiles);
         switch(tileId) {
             case 0:
-            case TileId.TRANSPERENT_COLLIDABLE_BLOCK:
                 tileTextureRegion.setRegion(80, 16, 16, 16);
+                break;
+
+                // TODO: make this transparent block look as level background
+            case TileId.TRANSPARENT_COLLIDABLE_BLOCK:
+                tileTextureRegion.setRegion(18 * 16, 16, 16, 16);
                 break;
 
             case 10:

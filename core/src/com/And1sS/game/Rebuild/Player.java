@@ -50,11 +50,11 @@ public class Player extends GameObject {
     }
 
     public void moveLeft() {
-        velocityX = -400 * Gdx.graphics.getWidth() / 1920.0f;
+        velocityX = -7 * defaultMarioHeight * Gdx.graphics.getWidth() / 1920.0f;
     }
 
     public void moveRight() {
-        velocityX = 400 * Gdx.graphics.getWidth() / 1920.0f;
+        velocityX = 7 * defaultMarioHeight * Gdx.graphics.getWidth() / 1920.0f;
     }
 
     public void jump() {
@@ -100,6 +100,8 @@ public class Player extends GameObject {
     public PlayerType getType() { return playerType; }
 
     public Rectangle getBounds() { return bounds; }
+
+    public boolean isAlive() { return alive; }
 
     private class PlayerUpdater implements IUpdatable {
 
@@ -190,7 +192,7 @@ public class Player extends GameObject {
             for (int i = (int) (y) / cellSize; i < (y + bounds.getHeight()) / cellSize; i++) {
                 for (int j = (int) (x) / cellSize; j < (x + bounds.getWidth()) / cellSize; j++) {
                     switch(level.getCell(j, i)) {
-                        case TileId.TRANSPERENT_COLLIDABLE_BLOCK: case 10: case 21:
+                        case TileId.TRANSPARENT_COLLIDABLE_BLOCK: case 10: case 21:
                         case 12: case 14: case 15:
                         case TileId.SECRET_BLOCK_EMPTY: case 22: case 23:
                             if (velocityX > 0) {
@@ -239,14 +241,16 @@ public class Player extends GameObject {
                         case TileId.BROWN_BRICK:
                             defaultCollisionY(i, cellSize);
                             if (y >= (i + 1) * cellSize) {
-                                level.setCell(j, i, 0);
+
                                 switch (playerType) {
                                     case INVINCIBLE_MARIO:
                                     case MARIO:
+                                        level.setCell(j, i, TileId.TRANSPARENT_COLLIDABLE_BLOCK);
                                         level.addObject(new BouncingBrownBrick(j, i, cellSize));
                                         break;
                                     case FIRE_MARIO:
                                     case SUPER_MARIO:
+                                        level.setCell(j, i, TileId.TRANSPARENT_NOT_COLLIDABLE_BLOCK);
                                         level.addObject(new BrokenBrick(j, i, cellSize));
                                         break;
 
@@ -267,9 +271,9 @@ public class Player extends GameObject {
                         case TileId.SECRET_BLOCK_POWERUP_SUPERMARIO:
                             defaultCollisionY(i, cellSize);
                             if (y >= (i + 1) * cellSize) {
-                                level.setCell(j, i, 0);
+                                level.setCell(j, i, TileId.TRANSPARENT_COLLIDABLE_BLOCK);
                                 level.addObject(new BouncingBrownIronBlock(j, i, cellSize));
-                                superMario();
+                                level.addObject(new Mushroom(j, i - 1, cellSize));
                             }
                             break;
 

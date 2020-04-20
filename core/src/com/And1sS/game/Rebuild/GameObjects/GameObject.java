@@ -2,6 +2,7 @@ package com.And1sS.game.Rebuild.GameObjects;
 
 import com.And1sS.game.Rebuild.Animation;
 import com.And1sS.game.Rebuild.Level;
+import com.And1sS.game.Rebuild.TileId;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -53,6 +54,10 @@ public class GameObject {
     public double getOffsetX() {
         return offsetX;
     }
+
+    public double getX() { return x; }
+
+    public double getY() { return y; }
 
     public double getVelocityX() {
         return velocityX;
@@ -151,12 +156,12 @@ public class GameObject {
                 spriteBatch.draw(animation.getCurrentRegion(),
                         (float) (x + bounds.getWidth() -  offsetX),
                         (float) (windowHeight - y - bounds.getHeight()),
-                        -bounds.getWidth() * 1.1f, bounds.getHeight());
+                        -bounds.getWidth(), bounds.getHeight());
             } else {
                 spriteBatch.draw(animation.getCurrentRegion(),
                         (float) (x - offsetX),
                         (float) (windowHeight - y - bounds.getHeight()),
-                        bounds.getWidth() * 1.1f, bounds.getHeight());
+                        bounds.getWidth(), bounds.getHeight());
             }
         }
 
@@ -167,6 +172,83 @@ public class GameObject {
         @Override
         public void updateAnimation(float deltaTime) {
             animation.update(deltaTime);
+        }
+    }
+
+    public class LeftRightBounceCollider implements ILevelCollidable {
+        @Override
+        public void performCollisionDetectionX(Level level) {
+            try {
+                _performCollisionDetectionX(level);
+            } catch(Exception e) {}
+        }
+
+        private void _performCollisionDetectionX(Level level) {
+            int cellSize = level.getCellSize();
+            for (int i = (int) (y) / cellSize; i < (y + bounds.getHeight()) / cellSize; i++) {
+                for (int j = (int) (x) / cellSize; j < (x + bounds.getWidth()) / cellSize; j++) {
+                    switch(level.getCell(j, i)) {
+                        case TileId.TRANSPARENT_COLLIDABLE_BLOCK: case 10: case 21:
+                        case 12: case 14: case 15:
+                        case TileId.SECRET_BLOCK_EMPTY: case 22: case 23:
+                            if (velocityX > 0) {
+                                x = j * cellSize - bounds.getWidth() - 0.001;
+                                velocityX *= -1;
+                                bounds.setX((float) x);
+                            } else if (velocityX < 0) {
+                                x = (j + 1) * cellSize;
+                                velocityX *= -1;
+                                bounds.setX((float) x);
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void performCollisionDetectionY(Level level) {
+            try {
+                _performCollisionDetectionY(level);
+            } catch(Exception e) {}
+        }
+
+        private void _performCollisionDetectionY(Level level) {
+            int cellSize = level.getCellSize();
+
+            for (int i = (int) (y) / cellSize; i < (y + bounds.getHeight()) / cellSize; i++) {
+                for (int j = (int) (x) / cellSize; j < (x + bounds.getWidth()) / cellSize; j++) {
+                    int cellType = level.getCell(j, i);
+                    switch(cellType) {
+                        case TileId.TRANSPARENT_COLLIDABLE_BLOCK: case 10: case 12:
+                        case TileId.BROWN_IRON_BLOCK:
+                        case TileId.BROWN_BRICK:
+                        case TileId.SECRET_BLOCK_EMPTY:
+                        case TileId.SECRET_BLOCK_POWERUP_SUPERMARIO:
+                        case 15: case 23:
+                            defaultCollisionY(i, cellSize);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void defaultCollisionY(int i, float cellSize) {
+            if(velocityY > 0) {
+                y = i * cellSize - bounds.getHeight();
+                velocityY = 0;
+                bounds.setY((float) y);
+            } else if (velocityY < 0) {
+                y = (i + 1) * cellSize;
+                velocityY = 0;
+                bounds.setY((float) y);
+            }
         }
     }
 }

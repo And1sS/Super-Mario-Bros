@@ -3,7 +3,6 @@ package com.And1sS.game.Rebuild.GameObjects;
 import com.And1sS.game.Rebuild.Animation;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.game.Rebuild.InterfacesImplementations.NotLevelCollidable;
-import com.And1sS.game.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
 import com.And1sS.game.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;

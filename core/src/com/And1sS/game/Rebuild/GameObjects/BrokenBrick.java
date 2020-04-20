@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BrokenBrick extends GameObject {
-    // TODO: rewrire this class, implement updater which will work for every part of brick
+    // TODO: rewrite this class, implement updater which will work for every part of brick
 
     List <GameObject> parts;
 

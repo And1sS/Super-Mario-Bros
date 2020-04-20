@@ -10,7 +10,8 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Goomba extends GameObject {
 
-    boolean alive = true;
+    private enum Type { DEFAULT, DIED, DIED_FLIPPED };
+    private Type type = Type.DEFAULT;
 
     public Goomba(int mapIndxX, int mapIndxY, float cellSize) {
         this(mapIndxX * cellSize, mapIndxY * cellSize,
@@ -24,7 +25,7 @@ public class Goomba extends GameObject {
 
         renderer = new ReversedObjectRenderer();
         objectCollisionDetector = new GoombaObjectsCollider();
-        levelCollisionDetector = new GoombaLevelCollider();
+        levelCollisionDetector = new LeftRightBounceCollider();
         updater = new GoombaUpdater();
         animationUpdater = new DefaultAnimationUpdater();
     }
@@ -35,101 +36,35 @@ public class Goomba extends GameObject {
 
         @Override
         public void update(float deltaTime, Level level) {
-            if (deltaTime < 0.025 && alive) {
-                //updating velocityY
-                velocityY += Level.GRAVITATIONAL_ACCELERATION * deltaTime;
+            switch (type) {
+                case DEFAULT: {
+                    if (deltaTime < 0.025) {
+                        //updating velocityY
+                        velocityY += Level.GRAVITATIONAL_ACCELERATION * deltaTime;
 
-                //updating X
-                x += velocityX * deltaTime;
-                bounds.setX((float) x);
-                performLevelCollisionDetectionX(level);
+                        //updating X
+                        x += velocityX * deltaTime;
+                        bounds.setX((float) x);
+                        performLevelCollisionDetectionX(level);
 
-                //updating Y
-                y += velocityY * deltaTime;
-                bounds.setY((float) y);
-                performLevelCollisionDetectionY(level);
-            } else if (!alive) {
-                timeAfterDeath += deltaTime;
-                if (timeAfterDeath > 3) {
-                    dispose();
-                }
-            }
-        }
-    }
-
-    private class GoombaLevelCollider implements ILevelCollidable {
-        @Override
-        public void performCollisionDetectionX(Level level) {
-            try {
-                _performCollisionDetectionX(level);
-            } catch(Exception e) {}
-        }
-
-        private void _performCollisionDetectionX(Level level) {
-            int cellSize = level.getCellSize();
-            for (int i = (int) (y) / cellSize; i < (y + bounds.getHeight()) / cellSize; i++) {
-                for (int j = (int) (x) / cellSize; j < (x + bounds.getWidth()) / cellSize; j++) {
-                    switch(level.getCell(j, i)) {
-                        case TileId.TRANSPERENT_COLLIDABLE_BLOCK: case 10: case 21:
-                        case 12: case 14: case 15:
-                        case TileId.SECRET_BLOCK_EMPTY: case 22: case 23:
-                            if (velocityX > 0) {
-                                x = j * cellSize - bounds.getWidth() - 0.001;
-                                velocityX *= -1;
-                                bounds.setX((float) x);
-                            } else if (velocityX < 0) {
-                                x = (j + 1) * cellSize;
-                                velocityX *= -1;
-                                bounds.setX((float) x);
-                            }
-                            break;
-
-                        default:
-                            break;
+                        //updating Y
+                        y += velocityY * deltaTime;
+                        bounds.setY((float) y);
+                        performLevelCollisionDetectionY(level);
                     }
+                    break;
                 }
-            }
-        }
 
-        @Override
-        public void performCollisionDetectionY(Level level) {
-            try {
-                _performCollisionDetectionY(level);
-            } catch(Exception e) {}
-        }
 
-        private void _performCollisionDetectionY(Level level) {
-            int cellSize = level.getCellSize();
-
-            for (int i = (int) (y) / cellSize; i < (y + bounds.getHeight()) / cellSize; i++) {
-                for (int j = (int) (x) / cellSize; j < (x + bounds.getWidth()) / cellSize; j++) {
-                    int cellType = level.getCell(j, i);
-                    switch(cellType) {
-                        case 1: case 10: case 12:
-                        case TileId.BROWN_IRON_BLOCK:
-                        case TileId.BROWN_BRICK:
-                        case TileId.SECRET_BLOCK_EMPTY:
-                        case TileId.SECRET_BLOCK_POWERUP_SUPERMARIO:
-                        case 15: case 23:
-                            defaultCollisionY(i, cellSize);
-                            break;
-
-                        default:
-                            break;
+                case DIED:
+                    timeAfterDeath += deltaTime;
+                    if (timeAfterDeath > 3) {
+                        dispose();
                     }
-                }
-            }
-        }
+                    break;
 
-        private void defaultCollisionY(int i, float cellSize) {
-            if(velocityY > 0) {
-                y = i * cellSize - bounds.getHeight();
-                velocityY = 0;
-                bounds.setY((float) y);
-            } else if (velocityY < 0) {
-                y = (i + 1) * cellSize;
-                velocityY = 0;
-                bounds.setY((float) y);
+                case DIED_FLIPPED:
+                    throw new RuntimeException("Unimplemented yet");
             }
         }
     }
@@ -145,7 +80,7 @@ public class Goomba extends GameObject {
                     player.bounds.setY((float) player.y);
                     player.smallJump();
 
-                    alive = false;
+                    type = Type.DIED;
                     objectCollisionDetector = new NotGameObjectCollidable();
                     levelCollisionDetector = new NotLevelCollidable();
 

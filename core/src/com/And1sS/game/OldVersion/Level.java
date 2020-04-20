@@ -154,8 +154,8 @@ public class Level {
 
     private void setCurrentTile(int tileId) {
         switch(tileId) {
-            case TileId.TRANSPERENT_COLLIDABLE_BLOCK:
-            case TileId.TRANSPERENT_NOT_COLLIDABLE_BLOCK:
+            case TileId.TRANSPARENT_COLLIDABLE_BLOCK:
+            case TileId.TRANSPARENT_NOT_COLLIDABLE_BLOCK:
                 currentTile.setRegion(80, 16, 16, 16);
                 break;
 

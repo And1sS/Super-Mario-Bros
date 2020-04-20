@@ -76,6 +76,9 @@ public class Animation {
     }
 
     public void update(float deltaTime) {
+        if (deltaTime > 0.025)
+            return;
+
         currentFrame += frameChangingSpeed * deltaTime;
         if(!looping && currentFrame > numberOfFrames) {
             animationEnded = true;
