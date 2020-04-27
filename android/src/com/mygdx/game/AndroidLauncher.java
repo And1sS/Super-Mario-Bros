@@ -2,7 +2,7 @@ package com.mygdx.game;
 
 import android.os.Bundle;
 
-import com.And1sS.game.OldVersion.Platformer;
+import com.And1sS.SuperMarioBros.OldVersion.Platformer;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
