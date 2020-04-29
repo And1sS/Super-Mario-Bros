@@ -1,5 +1,6 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
@@ -26,13 +27,15 @@ public class Platform extends com.And1sS.SuperMarioBros.Rebuild.GameObjects.Game
 
         switch (type) {
             case LEFT_RIGHT:
-                velocityX = 2 * level.getCellSize() * Gdx.graphics.getWidth() / 1920.0f;
+                velocityX = 2 * level.getCellSize();
                 velocityY = 0;
+                id = GameObjectId.PLATFORM_LEFT_RIGHT;
                 break;
 
             case TOP_DOWN:
                 velocityX = 0;
-                velocityY = 2 * level.getCellSize() * Gdx.graphics.getWidth() / 1920.0f;
+                velocityY = 2 * level.getCellSize();
+                id = GameObjectId.PLATFORM_TOP_DOWN;
                 break;
         }
 
@@ -41,7 +44,8 @@ public class Platform extends com.And1sS.SuperMarioBros.Rebuild.GameObjects.Game
 
     private Platform(float x, float y, float width, float height) {
         super(new Rectangle(x, y, width, height * 2),
-                new Animation("images/objects.png", 64, 129, 16, 7));
+                new Animation("images/objects.png", 64, 129, 16, 7),
+                -1);
 
         yStart = y;
         xStart = x;

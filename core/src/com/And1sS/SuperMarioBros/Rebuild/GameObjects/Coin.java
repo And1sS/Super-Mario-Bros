@@ -1,5 +1,6 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
@@ -19,7 +20,8 @@ public class Coin extends GameObject {
 
     private Coin(float x, float y, float width, float height, Texture objectsTexture) {
         super(new Rectangle(x, y, width, height),
-            new Animation(objectsTexture, 4, 0, 96, 16, 16, 10, false));
+            new Animation(objectsTexture, 4, 0, 96, 16, 16, 10, false),
+                GameObjectId.COIN);
 
         renderer = new DefaultObjectRenderer();
         updater = new CoinUpdater();

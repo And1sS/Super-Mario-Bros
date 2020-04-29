@@ -1,6 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
 import com.And1sS.SuperMarioBros.Rebuild.Level;
 import com.And1sS.SuperMarioBros.Rebuild.Player;
@@ -18,7 +19,8 @@ public class Mushroom extends GameObject {
 
     private Mushroom(float x, float y, Level level) {
         super(new Rectangle(x, y, level.getCellSize(), level.getCellSize()),
-                new Animation(level.getObectsTexture(),0, 0, 16, 16));
+                new Animation(level.getObectsTexture(),0, 0, 16, 16),
+                GameObjectId.MUSHROOM);
 
         renderer = new ReversedObjectRenderer();
         objectCollisionDetector = new MushroomCollider();

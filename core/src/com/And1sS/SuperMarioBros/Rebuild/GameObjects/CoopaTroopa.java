@@ -1,6 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.Level;
@@ -15,16 +16,17 @@ public class CoopaTroopa extends GameObject {
 
     private float shellVelocity;
 
-    public CoopaTroopa(int mapIndxX, int mapIndxY, float cellSize, Texture objectsTexture) {
-        this(mapIndxX * cellSize, mapIndxY * cellSize,
-                cellSize, objectsTexture);
-        velocityX = -6 * cellSize;
-        shellVelocity = 12 * cellSize;
+    public CoopaTroopa(int mapIndxX, int mapIndxY, Level level) {
+        this(mapIndxX * level.getCellSize(), mapIndxY * level.getCellSize(),
+                level.getCellSize(), level.getEnemiesTexture());
+        velocityX = -6 * level.getCellSize();
+        shellVelocity = 12 * level.getCellSize();
     }
 
     private CoopaTroopa(float x, float y, float cellSize, Texture objectsTexture) {
         super(new Rectangle(x, y, cellSize, 1.5f * cellSize),
-                new Animation("images/enemies.png", 2, 96, 8, 16, 24, 3, true));
+                new Animation("images/enemies.png", 2, 96, 8, 16, 24, 3, true),
+                GameObjectId.COOPA_TROOPA);
 
         renderer = new ReversedObjectRenderer();
         objectCollisionDetector = new CoopaTroopaGameObjectCollider();

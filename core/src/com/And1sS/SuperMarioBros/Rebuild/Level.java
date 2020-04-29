@@ -1,15 +1,19 @@
 package com.And1sS.SuperMarioBros.Rebuild;
 
+import com.And1sS.SuperMarioBros.Rebuild.GameObjects.CoopaTroopa;
 import com.And1sS.SuperMarioBros.Rebuild.GameObjects.GameObject;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Goomba;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Platform;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +31,9 @@ public class Level {
     private Texture enemiesTexture;
 
     private float currentFrame;
-    private static boolean editorMode = true;
+    private static boolean editorMode = false;
 
-    List<GameObject> objects;
+    private List<GameObject> objects;
 
     public Level(int map[][], int cellSize, Texture tiles, Texture obects, Texture enemies) {
         this.map = map;
@@ -61,7 +65,7 @@ public class Level {
         }
     }
 
-    public void render(SpriteBatch spriteBatch, Player player) {
+    public void render(@NotNull SpriteBatch spriteBatch, @NotNull Player player) {
 
         // TODO: rewrite this background drawing
         spriteBatch.draw(getTileTextureRegion(0), 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -95,10 +99,15 @@ public class Level {
     }
 
     // This method is only for level editor, never use it outside editor!
-    public void render(SpriteBatch spriteBatch, double offsetX) {
+    public void render(@NotNull SpriteBatch spriteBatch, double offsetX) {
+
 
         // TODO: rewrite this background drawing
         spriteBatch.draw(getTileTextureRegion(0), 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        for (GameObject object: objects) {
+            object.setOffsetX(offsetX);
+        }
 
         int startX = (int) (offsetX) / cellSize;
         int startY = 0;
@@ -124,9 +133,10 @@ public class Level {
         }
     }
 
+    @Nullable
     public static Level loadFromFile(String levelPath, String tilesTexturePath, String objectsTexturePath, String enemiesObjectsPath) {
         try {
-            FileHandle file = Gdx.files.internal(levelPath);
+            FileHandle file = Gdx.files.local(levelPath);
             BufferedReader br = new BufferedReader(file.reader());
 
             int mapWidth = Integer.parseInt(br.readLine());
@@ -145,30 +155,40 @@ public class Level {
                 }
             }
 
-            int objects = Integer.parseInt(br.readLine());
             Level loadedLevel = new Level(map,
                     Gdx.graphics.getHeight() / mapHeight,
                     new Texture(Gdx.files.internal(tilesTexturePath)),
                     new Texture(Gdx.files.internal(objectsTexturePath)),
                     new Texture(Gdx.files.internal(enemiesObjectsPath)));
-            int cellSize = loadedLevel.getCellSize();
+
+            int objects = Integer.parseInt(br.readLine());
 
             for(int i = 0; i < objects; i++) {
                 String line = br.readLine();
                 String[] tokens = line.split(del);
 
-                Rectangle objectBounds = new Rectangle(
-                        cellSize * Integer.parseInt(tokens[0]),
-                        cellSize * Integer.parseInt(tokens[1]),
-                        cellSize * Integer.parseInt(tokens[2]),
-                        cellSize * Integer.parseInt(tokens[3]));
+                int gameObjectId = Integer.parseInt(tokens[0]);
 
-                com.And1sS.SuperMarioBros.Rebuild.Animation objectAnimation = new Animation(tilesTexturePath,
-                        Integer.parseInt(tokens[4]), Integer.parseInt(tokens[5]),
-                        Integer.parseInt(tokens[6]), Integer.parseInt(tokens[7]));
-
-                loadedLevel.addObject(new BackgroundObject(objectBounds, objectAnimation));
+                if (gameObjectId != GameObjectId.BACKGROUND_OBJECT) {
+                    int mapIndxX = Integer.parseInt(tokens[1]);
+                    int mapIndxY = Integer.parseInt(tokens[2]);
+                    loadedLevel.addObject(gameObjectId, mapIndxX, mapIndxY);
+                } else {
+                    int cellSize = loadedLevel.getCellSize();
+                    loadedLevel.addObject(new BackgroundObject(
+                            new Rectangle(
+                                    cellSize * Integer.parseInt(tokens[1]),
+                                    cellSize * Integer.parseInt(tokens[2]),
+                                cellSize * Integer.parseInt(tokens[3]),
+                                    cellSize * Integer.parseInt(tokens[4])),
+                            new Animation(
+                                    loadedLevel.getTilesTexture(),
+                                    Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]),
+                                    Integer.parseInt(tokens[7]), Integer.parseInt(tokens[8]))
+                    ));
+                }
             }
+
             return loadedLevel;
 
         } catch(Exception e) {
@@ -195,12 +215,45 @@ public class Level {
                 file.writeString(tmp, true);
             }
 
-            file.writeString(String.valueOf(0), true);
+            file.writeString(String.valueOf(objects.size()) + "\n", true);
+            for (GameObject object: objects) {
+                tmp = "";
+                tmp += object.getId() + " ";
+
+                if (object.getId() == GameObjectId.BACKGROUND_OBJECT) {
+                    int cellX = (int) (object.getX() / cellSize);
+                    int cellY = (int) (object.getY() / cellSize);
+                    int cellWidth = (int) (object.getWidth() / cellSize);
+                    int cellHeight = (int) (object.getHeight() / cellSize);
+
+                    int textureX = (int) (object.getAnimation().getX());
+                    int textureY = (int) (object.getAnimation().getY());
+                    int textureWidth = (int) object.getAnimation().getDrawableWidth();
+                    int textureHeight = (int) object.getAnimation().getDrawableHeight();
+
+                    tmp += cellX + " " + cellY + " " + cellWidth + " " + cellHeight + " "
+                            + textureX + " " + textureY + " " + textureWidth + " " + textureHeight;
+                } else {
+                    int cellX = (int) (object.getX() / cellSize);
+                    int cellY = (int) (object.getY() / cellSize);
+
+                    tmp += cellX + " " + cellY;
+                }
+                tmp += "\n";
+
+                file.writeString(tmp, true);
+            }
+
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void setEditorMode(boolean editorMode) {
+        this.editorMode = editorMode;
     }
 
     public int getCell(int x, int y) {
@@ -221,6 +274,30 @@ public class Level {
 
     public void addObject(GameObject object) {
         objects.add(object);
+    }
+
+    public void addObject(int gameObjectId, int mapIndxX, int mapIndxY) {
+        switch (gameObjectId) {
+            case GameObjectId.GOOMBA:
+                addObject(new Goomba(mapIndxX, mapIndxY, this));
+                break;
+
+            case GameObjectId.COOPA_TROOPA:
+                addObject(new CoopaTroopa(mapIndxX, mapIndxY, this));
+                break;
+
+            case GameObjectId.PLATFORM_LEFT_RIGHT:
+                addObject(new Platform(mapIndxX, mapIndxY, this, Platform.Type.LEFT_RIGHT));
+                break;
+
+            case GameObjectId.PLATFORM_TOP_DOWN:
+                addObject(new Platform(mapIndxX, mapIndxY, this, Platform.Type.TOP_DOWN));
+                break;
+        }
+    }
+
+    public Texture getTilesTexture() {
+        return tilesTexture;
     }
 
     public Texture getObectsTexture() {
@@ -319,8 +396,14 @@ public class Level {
 
             case TileId.SECRET_BLOCK_DEFAULT_1:
             case TileId.SECRET_BLOCK_EMPTY:
-            case TileId.SECRET_BLOCK_POWERUP_SUPERMARIO:
                 tileTextureRegion.setRegion(4 * 16, 0, 16, 16);
+                break;
+            case TileId.SECRET_BLOCK_POWERUP_SUPERMARIO:
+                if (editorMode) {
+                    tileTextureRegion.setRegion(19 * 16, 0, 16, 16);
+                } else {
+                    tileTextureRegion.setRegion(4 * 16, 0, 16, 16);
+                }
                 break;
             case TileId.SECRET_BLOCK_DEFAULT_2:
                 tileTextureRegion.setRegion(5 * 16, 0, 16, 16);
@@ -335,6 +418,30 @@ public class Level {
                 break;
         }
 
+        return tileTextureRegion;
+    }
+
+    // This method is only for level editor, never use it outside editor!
+    public TextureRegion getGameObjectTextureRegion(int gameObjectId) {
+        TextureRegion tileTextureRegion = null;
+
+        switch (gameObjectId) {
+            case GameObjectId.GOOMBA:
+                tileTextureRegion = new TextureRegion(enemiesTexture);
+                tileTextureRegion.setRegion(0, 16, 16, 16);
+                break;
+
+           case GameObjectId.COOPA_TROOPA:
+               tileTextureRegion = new TextureRegion(enemiesTexture);
+               tileTextureRegion.setRegion(96, 7, 16, 25);
+               break;
+
+            case GameObjectId.PLATFORM_LEFT_RIGHT:
+            case GameObjectId.PLATFORM_TOP_DOWN:
+                tileTextureRegion = new TextureRegion(obectsTexture);
+                tileTextureRegion.setRegion(64, 129, 16, 7);
+                break;
+        }
         return tileTextureRegion;
     }
 

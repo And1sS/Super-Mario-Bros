@@ -1,6 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.Level;
@@ -21,7 +22,8 @@ public class Goomba extends GameObject {
 
     private Goomba(float x, float y, float cellSize, Texture objectsTexture) {
         super(new Rectangle(x, y, cellSize, cellSize),
-            new Animation(objectsTexture, 2, 0, 16, 16, 16, 3, true));
+            new Animation(objectsTexture, 2, 0, 16, 16, 16, 3, true),
+                GameObjectId.GOOMBA);
 
         renderer = new ReversedObjectRenderer();
         objectCollisionDetector = new GoombaObjectsCollider();

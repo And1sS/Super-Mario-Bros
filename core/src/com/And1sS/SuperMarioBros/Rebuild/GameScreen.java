@@ -21,14 +21,11 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        level = Level.loadFromFile("levels/test.lvl",
+        level = Level.loadFromFile("saved_levels/level1.lvl",
                 "images/map.png",
                 "images/objects.png",
                 "images/enemies.png");
-        player = new Player(100, 0, 0.85f * level.getCellSize(), level.getCellSize());
-        level.addObject(new CoopaTroopa(14, 12, level.getCellSize(), level.getEnemiesTexture()));
-        level.addObject(new Platform(25, 8, level, Platform.Type.LEFT_RIGHT));
-        level.addObject(new Platform(190, 8, level, Platform.Type.TOP_DOWN));
+        player = new Player(3 * level.getCellSize(), 14 * level.getCellSize(), 0.85f * level.getCellSize(), level.getCellSize());
         controller = new OnScreenController();
     }
 

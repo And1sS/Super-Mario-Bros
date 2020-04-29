@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class BackgroundObject extends GameObject {
 
     public BackgroundObject(Rectangle bounds, Animation animation) {
-        super(bounds, animation);
+        super(bounds, animation, GameObjectId.BACKGROUND_OBJECT);
 
         renderer = new DefaultObjectRenderer();
         updater = new NotUpdatable();

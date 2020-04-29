@@ -1,5 +1,6 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
@@ -27,18 +28,23 @@ public class BrokenBrick extends GameObject {
 
     private BrokenBrick(float x, float y, Level level) {
         super(new Rectangle(x, y, level.getCellSize(), level.getCellSize()),
-                new Animation(level.getObectsTexture(), 64, 16, 16, 16));
+                new Animation(level.getObectsTexture(), 64, 16, 16, 16),
+                GameObjectId.BROKEN_BRICK);
 
         int cellSize = level.getCellSize();
         parts = new ArrayList<>();
         parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16)));
+                new Animation("images/objects.png", 64, 16, 16, 16),
+                GameObjectId.BROKEN_BRICK_PART));
         parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16)));
+                new Animation("images/objects.png", 64, 16, 16, 16),
+                GameObjectId.BROKEN_BRICK_PART));
         parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16)));
+                new Animation("images/objects.png", 64, 16, 16, 16),
+                GameObjectId.BROKEN_BRICK_PART));
         parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16)));
+                new Animation("images/objects.png", 64, 16, 16, 16),
+                GameObjectId.BROKEN_BRICK_PART));
 
         // 0, 1 - going left, rotating left; 2, 3 - opposite
 

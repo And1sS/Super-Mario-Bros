@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 public class GameObject {
+    protected int id;
+
     protected double velocityX = 0;
     protected double velocityY = 0;
     protected double offsetX = 0;
@@ -31,12 +33,13 @@ public class GameObject {
     public GameObject() {
     }
 
-    public GameObject(Rectangle bounds, Animation animation) {
+    public GameObject(Rectangle bounds, Animation animation, int id) {
         this.bounds = bounds;
         this.x = bounds.getX();
         this.y = bounds.getY();
 
         this.animation = animation;
+        this.id = id;
     }
 
     public void recalculateBounds(int oldCellSize, int newCellSize) {
@@ -59,6 +62,10 @@ public class GameObject {
 
     public double getY() { return y; }
 
+    public double getWidth() { return bounds.width; }
+
+    public double getHeight() { return bounds.height; }
+
     public double getVelocityX() {
         return velocityX;
     }
@@ -66,6 +73,12 @@ public class GameObject {
     public double getVelocityY() {
         return velocityY;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public Animation getAnimation() { return animation; }
 
     public void setOffsetX(double offsetX) {
         this.offsetX = offsetX;

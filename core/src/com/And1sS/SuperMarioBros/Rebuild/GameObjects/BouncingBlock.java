@@ -1,6 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
@@ -16,7 +17,7 @@ public class BouncingBlock extends GameObject {
 
     public BouncingBlock(int mapIndxX, int mapIndxY, float cellSize, int tileId, Animation animation) {
         super(new Rectangle(mapIndxX * cellSize, Gdx.graphics.getHeight() - (mapIndxY + 1) * cellSize, cellSize, cellSize),
-                animation);
+                animation, GameObjectId.BOUNCING_BLOCK);
         this.mapIndxX = mapIndxX;
         this.mapIndxY = mapIndxY;
         this.tileId = tileId;

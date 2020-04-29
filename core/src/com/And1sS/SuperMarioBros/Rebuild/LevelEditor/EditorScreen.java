@@ -18,7 +18,6 @@ public class EditorScreen implements Screen {
     private Texture tiles;
     private Texture objects;
     private Texture enemies;
-    private TextureRegion currentTile;
 
     private GameObjectPicker picker;
     private OnScreenController controller;
@@ -36,19 +35,18 @@ public class EditorScreen implements Screen {
 
         controller = new OnScreenController();
         picker = new GameObjectPicker(Gdx.graphics.getWidth() * 3 / 4.0f, 0,
-                Gdx.graphics.getWidth() / 4.0f, Gdx.graphics.getHeight() / 3.0f);
+                Gdx.graphics.getWidth() / 4.0f, Gdx.graphics.getHeight());
 
-        tiles = new Texture(Gdx.files.internal("images/map.png"));
-        objects = new Texture(Gdx.files.internal("images/objects.png"));
-        enemies = new Texture(Gdx.files.internal("images/enemies.png"));
+//        tiles = new Texture(Gdx.files.internal("images/map.png"));
+//        objects = new Texture(Gdx.files.internal("images/objects.png"));
+//        enemies = new Texture(Gdx.files.internal("images/enemies.png"));
 //        level = new Level(new int[sizeY][sizeX], Gdx.graphics.getHeight() / sizeY,
 //                tiles, objects, enemies);
-        level = Level.loadFromFile("levels/test.lvl",
+        level = Level.loadFromFile("levels/level1.lvl",
                 "images/map.png",
                 "images/objects.png",
                 "images/enemies.png");
-
-        currentTile = new TextureRegion(tiles);
+        level.setEditorMode(true);
     }
 
     @Override
@@ -63,10 +61,13 @@ public class EditorScreen implements Screen {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         batch.begin();
         level.render(batch, offsetX);
-        controller.drawControls(batch);
         batch.end();
 
         picker.render(batch, renderer, level);
+
+        batch.begin();
+        controller.drawControls(batch);
+        batch.end();
     }
 
     private void handleInput() {
@@ -77,11 +78,11 @@ public class EditorScreen implements Screen {
         }
 
         if (Gdx.input.justTouched()) {
-            if (isPickerTouched()) {
-                picker.handleInput();
-            } else if (controller.isMenuPressed()) {
+            if (controller.isMenuPressed()) {
                 level.saveToFile("saved_levels/test.lvl");
-            } else {
+            } else if (isPickerTouched()) {
+                picker.handleInput();
+            }  else {
                 handleEditorInput();
             }
         }
@@ -93,7 +94,6 @@ public class EditorScreen implements Screen {
 
         switch (picker.getLastPickedObjectType()) {
             case STATIC_GAME_OBJECT:
-            case DYNAMIC_GAME_OBJECT:
             case NONE:
                 return;
 
@@ -106,6 +106,11 @@ public class EditorScreen implements Screen {
                         level.setCell(pickedCellX, pickedCellY, picker.getLastPickedTileId());
                     }
                 } catch (Exception e) {}
+                break;
+            }
+
+            case DYNAMIC_GAME_OBJECT: {
+                level.addObject(picker.getLastPickedGameObjectId(), pickedCellX, pickedCellY);
                 break;
             }
         }
@@ -123,29 +128,6 @@ public class EditorScreen implements Screen {
         }
 
         return false;
-    }
-
-    private void setCurrentTile(int tileId) {
-        switch(tileId) {
-            case 0:
-                currentTile.setRegion(80, 16, 0, 0);
-                break;
-            case 1:
-                currentTile.setRegion(80, 16, 0, 0);
-                break;
-            case 10:
-                currentTile.setRegion(0, 0, 16, 16);
-                break;
-            case 14:
-                currentTile.setRegion(161, 32, 15, 16);
-                break;
-            case 20:
-                currentTile.setRegion(64, 0, 16, 16);
-                break;
-            case 21:
-                currentTile.setRegion(176, 0, 16, 16);
-                break;
-        }
     }
 
     @Override

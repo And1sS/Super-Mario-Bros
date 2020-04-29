@@ -12,7 +12,8 @@ public class CoopaTroopa extends Enemy {
 	private Type type;
 
 	public CoopaTroopa(float x, float y, float width, float height) {
-		super(x, y, width, height, new Anim("images/enemies.png", 2, 96, 7, 16, 25, -1, -1, -1, -1, (double)5, true));
+		super(x, y, width, height,
+				new Anim("images/enemies.png", 2, 96, 7, 16, 25, -1, -1, -1, -1, (double)5, true));
 		
 		type = Type.TURTLE;
 	}
