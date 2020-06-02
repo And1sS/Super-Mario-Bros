@@ -1,8 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
-import com.And1sS.SuperMarioBros.Rebuild.Level;
-import com.And1sS.SuperMarioBros.Rebuild.TileId;
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.TileId;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -96,7 +95,7 @@ public class GameObject {
         return shouldBeDisposed || !animation.isLoadedSucessful();
     }
 
-    public void update(float deltaTime, com.And1sS.SuperMarioBros.Rebuild.Level level) {
+    public void update(float deltaTime, Level level) {
         updater.update(deltaTime, level);
     }
 
@@ -108,11 +107,11 @@ public class GameObject {
         renderer.render(spriteBatch);
     }
 
-    public void performLevelCollisionDetectionX(com.And1sS.SuperMarioBros.Rebuild.Level level) {
+    public void performLevelCollisionDetectionX(Level level) {
         levelCollisionDetector.performCollisionDetectionX(level);
     }
 
-    public void performLevelCollisionDetectionY(com.And1sS.SuperMarioBros.Rebuild.Level level) {
+    public void performLevelCollisionDetectionY(Level level) {
         levelCollisionDetector.performCollisionDetectionY(level);
     }
 
@@ -121,12 +120,12 @@ public class GameObject {
     }
 
     public interface IUpdatable {
-        void update(float deltaTime, com.And1sS.SuperMarioBros.Rebuild.Level level);
+        void update(float deltaTime, Level level);
     }
 
     public interface ILevelCollidable {
-        void performCollisionDetectionX(com.And1sS.SuperMarioBros.Rebuild.Level level);
-        void performCollisionDetectionY(com.And1sS.SuperMarioBros.Rebuild.Level level);
+        void performCollisionDetectionX(Level level);
+        void performCollisionDetectionY(Level level);
     }
 
     public interface IGameObjectCollidable {
@@ -190,7 +189,7 @@ public class GameObject {
 
     public class LeftRightBounceCollider implements ILevelCollidable {
         @Override
-        public void performCollisionDetectionX(com.And1sS.SuperMarioBros.Rebuild.Level level) {
+        public void performCollisionDetectionX(Level level) {
             try {
                 _performCollisionDetectionX(level);
             } catch(Exception e) {}
@@ -239,7 +238,7 @@ public class GameObject {
         }
 
         @Override
-        public void performCollisionDetectionY(com.And1sS.SuperMarioBros.Rebuild.Level level) {
+        public void performCollisionDetectionY(Level level) {
             try {
                 _performCollisionDetectionY(level);
             } catch(Exception e) {}

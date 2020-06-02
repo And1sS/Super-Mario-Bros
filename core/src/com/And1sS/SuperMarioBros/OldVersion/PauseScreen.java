@@ -1,23 +1,27 @@
 package com.And1sS.SuperMarioBros.OldVersion;
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.math.*;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 public class PauseScreen implements Screen
 {
-    private Game game;
+    private final Game game;
 	
-	private Screen gameScreen;
+	private final Screen gameScreen;
 	
-	private SpriteBatch batch;
+	private final SpriteBatch batch;
 	
-	private Texture buttonAtlas;
+	private final Texture buttonAtlas;
 	
-	private com.And1sS.SuperMarioBros.OldVersion.Button resumeButton;
-	private com.And1sS.SuperMarioBros.OldVersion.Button restartButton;
-	private com.And1sS.SuperMarioBros.OldVersion.Button mainMenuButton;
-	private com.And1sS.SuperMarioBros.OldVersion.Button exitButton;
+	private final com.And1sS.SuperMarioBros.OldVersion.Button resumeButton;
+	private final com.And1sS.SuperMarioBros.OldVersion.Button restartButton;
+	private final com.And1sS.SuperMarioBros.OldVersion.Button mainMenuButton;
+	private final com.And1sS.SuperMarioBros.OldVersion.Button exitButton;
 	
 	public PauseScreen(Game game, com.And1sS.SuperMarioBros.OldVersion.GameScreen gameScreen) {
 		this.game = game;
@@ -116,9 +120,9 @@ public class PauseScreen implements Screen
 			game.setScreen(gameScreen);
 		else if(restartButton.justTouched())
 			game.setScreen(new GameScreen(game));
-		else if(mainMenuButton.justTouched())
-			game.setScreen(new StartScreen(game));
-		else if(exitButton.justTouched())
-			System.exit(0);
+		else if(mainMenuButton.justTouched());
+//			game.setScreen(new StartScreen(game));
+//		else if(exitButton.justTouched())
+//			System.exit(0);
 	}
 }

@@ -1,6 +1,8 @@
-package com.And1sS.SuperMarioBros.Rebuild;
+package com.And1sS.SuperMarioBros.Rebuild.GameConstants;
 
 public class GameObjectId {
+    public static final int TEMPRORARY_ID = -1;
+
     public static final int PLAYER = 0;
     public static final int BACKGROUND_OBJECT = 1;
 
@@ -13,6 +15,7 @@ public class GameObjectId {
     public static final int GOOMBA = 50;
     public static final int COOPA_TROOPA = 51;
     public static final int MUSHROOM = 52;
+    public static final int FLYING_COOPA_TROOPA = 53;
 
 
     public static final int PLATFORM_LEFT_RIGHT = 80;

@@ -1,10 +1,11 @@
-package com.And1sS.SuperMarioBros.Rebuild;
+package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
+import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
-import com.And1sS.SuperMarioBros.Rebuild.GameObjects.GameObject;
 import com.badlogic.gdx.math.Rectangle;
 
 public class BackgroundObject extends GameObject {

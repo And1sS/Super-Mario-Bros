@@ -3,29 +3,29 @@ package com.And1sS.SuperMarioBros.OldVersion;
 public class Goomba extends Enemy {
 	
 	public Goomba(float x, float y, float width, float height) {
-		super(x, y, width, height, new Anim("images/enemies.png", 2, 0, 16, 16, 16, -1, -1, -1, -1, (double)5, true));
+		super(x, y, width, height, new Anim("images/enemies.png", 2, 0, 16, 16, 16, -1, -1, -1, -1, 5, true));
 	}
 
 	@Override
-	public void update(Level level, Player player) {
+	public void update(Level level, Mario mario) {
 		// TODO: Implement this method
-		super.update(level, player);
+		super.update(level, mario);
 
-		if(getBody().getBounds().overlaps(player.getBody().getBounds()) &&
-		   		!isDied() && !player.isDied()) {
-			if(player.getBody().getVelocityY() > 0 && !player.getBody().isOnGround()) {
+		if(getBody().getBounds().overlaps(mario.getBody().getBounds()) &&
+		   		!isDied() && !mario.isDied()) {
+			if(mario.getBody().getVelocityY() > 0 && !mario.getBody().isOnGround()) {
 
-				player.getBody().setVelocityY(player.getBody().getVelocityY() * -0.8f);
-				player.setScore(player.getScore() + 100);
+				mario.getBody().setVelocityY(mario.getBody().getVelocityY() * -0.8f);
+				mario.setScore(mario.getScore() + 100);
 
 				smashGoomba();
 
-			} else if(player.getType() != Player.MarioType.MARIO) {
-				player.mario(level);
-				player.startLowInvincibility();
-			} else if(player.getType() == Player.MarioType.MARIO
-			 && !player.isLowInvincibility()) {
-				player.die();
+			} else if(mario.getType() != Mario.MarioType.MARIO) {
+				mario.mario(level);
+				mario.startLowInvincibility();
+			} else if(mario.getType() == Mario.MarioType.MARIO
+			 && !mario.isLowInvincibility()) {
+				mario.die();
             }
 		}
 	}

@@ -1,10 +1,15 @@
 package com.And1sS.SuperMarioBros.OldVersion;
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameOverScreen implements Screen {
-	
 	Game game;
 	
 	SpriteBatch batch;
@@ -73,7 +78,7 @@ public class GameOverScreen implements Screen {
 	private void updateTimer() {
 		timer -= Gdx.graphics.getDeltaTime();
 		
-		if(timer <= 0)
-			game.setScreen(new StartScreen(game));
+//		if(timer <= 0)
+//			game.setScreen(new StartScreen(game));
 	}
 }

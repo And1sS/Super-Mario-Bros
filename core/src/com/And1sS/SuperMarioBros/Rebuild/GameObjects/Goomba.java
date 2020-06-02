@@ -1,17 +1,16 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
-import com.And1sS.SuperMarioBros.Rebuild.Player;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Goomba extends GameObject {
 
-    private enum Type { DEFAULT, DIED, DIED_FLIPPED };
+    private enum Type { DEFAULT, DIED, DIED_FLIPPED }
+
     private Type type = Type.DEFAULT;
 
     public Goomba(int mapIndxX, int mapIndxY, Level level) {
@@ -37,7 +36,7 @@ public class Goomba extends GameObject {
         float timeAfterDeath = 0;
 
         @Override
-        public void update(float deltaTime, com.And1sS.SuperMarioBros.Rebuild.Level level) {
+        public void update(float deltaTime, Level level) {
             switch (type) {
                 case DEFAULT: {
                     //updating velocityY
@@ -73,12 +72,15 @@ public class Goomba extends GameObject {
 
         @Override
         public void performCollisionDetection(GameObject object) {
-            if (object instanceof com.And1sS.SuperMarioBros.Rebuild.Player && object.bounds.overlaps(bounds)) {
-                com.And1sS.SuperMarioBros.Rebuild.Player player = (com.And1sS.SuperMarioBros.Rebuild.Player)object;
-                if (player.velocityY > 0 && player.y < y) {
-                    player.y = y - player.bounds.getHeight();
-                    player.bounds.setY((float) player.y);
-                    player.smallJump();
+            if (object instanceof Mario && object.bounds.overlaps(bounds)) {
+                Mario mario = (Mario)object;
+                if (!mario.isAlive())
+                    return;
+
+                if (mario.velocityY > 0 && mario.y < y) {
+                    mario.y = y - mario.bounds.getHeight();
+                    mario.bounds.setY((float) mario.y);
+                    mario.smallJump();
 
                     type = Type.DIED;
                     objectCollisionDetector = new NotGameObjectCollidable();
@@ -88,8 +90,8 @@ public class Goomba extends GameObject {
                     y += bounds.getHeight();
                     bounds.setY((float) y);
                     animation.setSpeed(0);
-                } else if (player.getType() != Player.PlayerType.INVINCIBLE_MARIO){
-                    player.resetPowerUps();
+                } else if (mario.getType() != Mario.PlayerType.INVINCIBLE_MARIO){
+                    mario.resetPowerUps();
                 }
             }
         }

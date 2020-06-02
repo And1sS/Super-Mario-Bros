@@ -1,35 +1,41 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.And1sS.SuperMarioBros.Rebuild.GameManager;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameScreen implements Screen {
 	
-	private Game game;
+	private final Game game;
 
-	private SpriteBatch batch;
+	private final SpriteBatch batch;
 
-	private Player player;
+	private final Mario mario;
 
 	private Level currentLevel;
 
-	private OnScreenController controller;
+	private final OnScreenController controller;
 
-	private Hud hud;
+	private final Hud hud;
 
-	private BitmapFont font;
+	private final BitmapFont font;
 
-	private GlyphLayout glyphLayout;
+	private final GlyphLayout glyphLayout;
 
 	private double timer = 3;
 	
 	private boolean showLives;
 	private boolean blackScreen;
 
-	private float livesTextWidth;
-	private float levelTextWidth;
+	private final float livesTextWidth;
+	private final float levelTextWidth;
 
 	public GameScreen(Game game) {
 		this.game = game;
@@ -41,7 +47,7 @@ public class GameScreen implements Screen {
 
 		currentLevel = Level.loadFromFile("levels/level1.lvl", "images/map.png");
 
-		player = new Player("images/mario.png",
+		mario = new Mario("images/mario.png",
 				7 * currentLevel.getCellSize(), 12 * currentLevel.getCellSize(),
 				currentLevel.getCellSize(), currentLevel.getCellSize());
 
@@ -69,14 +75,14 @@ public class GameScreen implements Screen {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-			font.draw(batch, "   x " + player.getLives(), 
+			font.draw(batch, "   x " + mario.getLives(),
 					  (Gdx.graphics.getWidth() - livesTextWidth) / 2,
 					  (Gdx.graphics.getHeight() + livesTextWidth) / 2);
-			batch.draw(player.getAnimation().getCurrentRegion(),
+			batch.draw(mario.getAnimation().getCurrentRegion(),
 			           (Gdx.graphics.getWidth() - livesTextWidth) / 2,
-					   (Gdx.graphics.getHeight() - (float)player.getBody().getHeight()) / 2,
-					   (float)player.getBody().getWidth(),
-					   (float)player.getBody().getHeight());
+					   (Gdx.graphics.getHeight() - mario.getBody().getHeight()) / 2,
+					mario.getBody().getWidth(),
+					mario.getBody().getHeight());
 		} else if(blackScreen) {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			font.draw(batch, "Level 1-1", 
@@ -84,12 +90,13 @@ public class GameScreen implements Screen {
 					  Gdx.graphics.getHeight() / 2 + levelTextWidth / 2);
 		} else {
 			drawMap(batch);
-		    player.drawBullets(batch);
-		    player.draw(batch);
+		    mario.drawBullets(batch);
+		    mario.draw(batch);
 		
-		    font.draw(batch, String.valueOf(Gdx.graphics.getFramesPerSecond()), 0, Gdx.graphics.getHeight());
-		              hud.drawHud(batch, player.getScore(), "1 - 1", currentLevel.getTime());
-		              controller.drawControls(batch);
+		    font.draw(batch, String.valueOf(Gdx.graphics.getFramesPerSecond()),
+					0, Gdx.graphics.getHeight());
+		  	hud.drawHud(batch, mario.getScore(), GameManager.getManager().getLevelLabel(), currentLevel.getTime());
+		  	controller.drawControls(batch);
 		} 
 			
 		batch.end();
@@ -126,42 +133,42 @@ public class GameScreen implements Screen {
 
 	private void drawMap(SpriteBatch batch) {
 		currentLevel.drawMapWithOffset(batch,
-				(int) (player.getBody().getOffsetX()) / currentLevel.getCellSize(), 0,
+				(int) (mario.getBody().getOffsetX()) / currentLevel.getCellSize(), 0,
 				Gdx.graphics.getWidth() / currentLevel.getCellSize() + 2, currentLevel.getHeight(),
-				(float) player.getBody().getOffsetX());
+				mario.getBody().getOffsetX());
 	}
 
 	private void updateLogic() {
-		player.update(currentLevel);
+		mario.update(currentLevel);
 		
-		int result = player.showGameOverScreen(currentLevel);
+		int result = mario.showGameOverScreen(currentLevel);
 		
 		if(result != -1) {
 			showLives = true;
 		} 
 		
-		if(!player.isDied() && !showLives) {
+		if(!mario.isDied() && !showLives) {
 			currentLevel.updateTime();
-			player.updateBullets(currentLevel);
-		    currentLevel.getEnemyManager().updateEnemies(currentLevel, player);
+			mario.updateBullets(currentLevel);
+		    currentLevel.getEnemyManager().updateEnemies(currentLevel, mario);
 	    }
 	}
 	
 	private void handleInput() {
-		if(controller.isRightPressed() && !player.isDied()) {
-			player.getBody().setVelocityX(700 * Gdx.graphics.getWidth() / 1920);
+		if(controller.isRightPressed() && !mario.isDied()) {
+			mario.getBody().setVelocityX(700 * Gdx.graphics.getWidth() / 1920);
 		}
-		if(controller.isLeftPressed() && !player.isDied()) {
-			player.getBody().setVelocityX(-700 * Gdx.graphics.getWidth() / 1920);
+		if(controller.isLeftPressed() && !mario.isDied()) {
+			mario.getBody().setVelocityX(-700 * Gdx.graphics.getWidth() / 1920);
 		}
-		if(controller.isJumpPressed() && player.getBody().isOnGround() && !player.isDied()) {
-			player.getBody().setVelocityY(-1800 * Gdx.graphics.getHeight() / 1080);
+		if(controller.isJumpPressed() && mario.getBody().isOnGround() && !mario.isDied()) {
+			mario.getBody().setVelocityY(-1800 * Gdx.graphics.getHeight() / 1080);
 		}
 		if(controller.isMenuPressed())
 			game.setScreen(new PauseScreen(game, this));
 		
 		if(controller.isShootTouched())
-			player.shoot(currentLevel);
+			mario.shoot(currentLevel);
 
 	}
 	
@@ -174,7 +181,7 @@ public class GameScreen implements Screen {
 				showLives = false;
 				currentLevel = Level.loadFromFile("levels/level1.lvl", "images/map.png");
 				
-				if(player.getLives() <= 0) {
+				if(mario.getLives() <= 0) {
 					game.setScreen(new GameOverScreen(game));
 				}
 			}

@@ -1,32 +1,57 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
-import com.And1sS.SuperMarioBros.Rebuild.Player;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
 public class CoopaTroopa extends GameObject {
 
-    private enum Type { DEFAULT, FLYING, SHELL, DIED_SHELL };
+    public enum Type { DEFAULT, FLYING, SHELL, DIED_SHELL }
+
     private Type type = Type.DEFAULT;
 
     private float shellVelocity;
 
-    public CoopaTroopa(int mapIndxX, int mapIndxY, Level level) {
+    public CoopaTroopa(int mapIndxX, int mapIndxY, Level level, Type type) {
         this(mapIndxX * level.getCellSize(), mapIndxY * level.getCellSize(),
-                level.getCellSize(), level.getEnemiesTexture());
+                level.getCellSize(), level.getEnemiesTexture(), type);
+
         velocityX = -6 * level.getCellSize();
         shellVelocity = 12 * level.getCellSize();
     }
 
+    public CoopaTroopa(int mapIndxX, int mapIndxY, Level level) {
+        this(mapIndxX, mapIndxY, level, Type.DEFAULT);
+    }
+
     private CoopaTroopa(float x, float y, float cellSize, Texture objectsTexture) {
-        super(new Rectangle(x, y, cellSize, 1.5f * cellSize),
-                new Animation("images/enemies.png", 2, 96, 8, 16, 24, 3, true),
-                GameObjectId.COOPA_TROOPA);
+        this(x, y, cellSize, objectsTexture, Type.DEFAULT);
+    }
+
+    private CoopaTroopa(float x, float y, float cellSize, Texture objectsTexture, Type type) {
+        super(new Rectangle(x, y, cellSize, 1.5f * cellSize), null, GameObjectId.TEMPRORARY_ID);
+
+        Animation animation;
+        switch (type) {
+            case DEFAULT:
+                this.id = GameObjectId.COOPA_TROOPA;
+                animation = new Animation("images/enemies.png", 2, 96, 8, 16, 24, 3, true);
+                break;
+
+            case FLYING:
+                this.id = GameObjectId.FLYING_COOPA_TROOPA;
+                animation = new Animation("images/enemies.png", 2, 128, 8, 16, 24, 3, true);
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value of CoopaTroopa type: " + type);
+        }
+
+        this.animation = animation;
+        this.type = type;
 
         renderer = new ReversedObjectRenderer();
         objectCollisionDetector = new CoopaTroopaGameObjectCollider();
@@ -37,19 +62,28 @@ public class CoopaTroopa extends GameObject {
 
     private class CoopaTroopaUpdater implements IUpdatable {
 
+        private float timeOnFloor = 0;
+
+        private static final float MAX_TIME_ON_FLOOR = 1;
         @Override
-        public void update(float deltaTime, com.And1sS.SuperMarioBros.Rebuild.Level level) {
+        public void update(float deltaTime,  Level level) {
             switch (type) {
-                case DEFAULT:
-                    if (velocityX > 0) {
-                        flipAnimationXAxis = true;
-                    } else {
-                        flipAnimationXAxis = false;
+                case FLYING:
+                    if (velocityY == 0) {
+                        timeOnFloor += deltaTime;
+
+                        if (timeOnFloor >= MAX_TIME_ON_FLOOR) {
+                            velocityY = -15 * level.getCellSize();
+                            timeOnFloor = 0;
+                        }
                     }
+
+                case DEFAULT:
+                    flipAnimationXAxis = velocityX > 0;
 
                 case SHELL: {
                     //updating velocityY
-                    velocityY += com.And1sS.SuperMarioBros.Rebuild.Level.GRAVITATIONAL_ACCELERATION * deltaTime;
+                    velocityY += Level.GRAVITATIONAL_ACCELERATION * deltaTime;
 
                     //updating X
                     x += velocityX * deltaTime;
@@ -75,9 +109,6 @@ public class CoopaTroopa extends GameObject {
                     }
                     break;
                 }
-
-                case FLYING:
-                    throw new RuntimeException("Unimplemented yet!");
             }
         }
     }
@@ -86,17 +117,18 @@ public class CoopaTroopa extends GameObject {
 
         @Override
         public void performCollisionDetection(GameObject object) {
-            if (object instanceof com.And1sS.SuperMarioBros.Rebuild.Player && object.bounds.overlaps(bounds)) {
-                com.And1sS.SuperMarioBros.Rebuild.Player player = (com.And1sS.SuperMarioBros.Rebuild.Player)object;
-                if (!player.isAlive())
+            if (object instanceof Mario && object.bounds.overlaps(bounds)) {
+                Mario mario = (Mario)object;
+                if (!mario.isAlive())
                     return;
 
                 switch (type) {
-                    case DEFAULT: {
-                        if (player.velocityY > 0 && player.y < y) { // player kills coopa troopa
-                            player.y = y - player.bounds.getHeight();
-                            player.bounds.setY((float) player.y);
-                            player.smallJump();
+                    case DEFAULT:
+                    case FLYING: {
+                        if (mario.velocityY > 0 && mario.y < y) { // player kills coopa troopa
+                            mario.y = y - mario.bounds.getHeight();
+                            mario.bounds.setY((float) mario.y);
+                            mario.smallJump();
 
                             type = Type.SHELL;
 
@@ -108,31 +140,31 @@ public class CoopaTroopa extends GameObject {
                             animation.setCurrentFrame(0);
 
                             velocityX = 0;
-                        } else if (player.getType() != com.And1sS.SuperMarioBros.Rebuild.Player.PlayerType.INVINCIBLE_MARIO){ // coopa troopa kills the player
-                            player.resetPowerUps();
+                        } else if (mario.getType() != Mario.PlayerType.INVINCIBLE_MARIO){ // coopa troopa kills the player
+                            mario.resetPowerUps();
                         }
 
                         break;
                     }
 
                     case SHELL: {
-                        if (player.velocityY > 0 && player.y < y) { // player kills shell
-                            player.y = y - player.bounds.getHeight();
-                            player.bounds.setY((float) player.y);
-                            player.smallJump();
+                        if (mario.velocityY > 0 && mario.y < y) { // player kills shell
+                            mario.y = y - mario.bounds.getHeight();
+                            mario.bounds.setY((float) mario.y);
+                            mario.smallJump();
 
                             type = Type.DIED_SHELL;
                             objectCollisionDetector = new NotGameObjectCollidable();
                             levelCollisionDetector = new NotLevelCollidable();
                             velocityX = 0;
-                        } else if (player.getType() != Player.PlayerType.INVINCIBLE_MARIO && velocityX != 0){ // shell kills player
-                            player.resetPowerUps();
+                        } else if (mario.getType() != Mario.PlayerType.INVINCIBLE_MARIO && velocityX != 0){ // shell kills player
+                            mario.resetPowerUps();
                         } else if (velocityX == 0) {
-                            if (player.x < x && player.velocityX > 0) {
-                                x = player.x + player.bounds.getWidth();
+                            if (mario.x < x && mario.velocityX > 0) {
+                                x = mario.x + mario.bounds.getWidth();
                                 velocityX = shellVelocity;
-                            } else if (player.x > x && player.velocityX < 0) {
-                                x = player.x - bounds.getWidth();
+                            } else if (mario.x > x && mario.velocityX < 0) {
+                                x = mario.x - bounds.getWidth();
                                 velocityX = -shellVelocity;
                             }
                         } // player tries to move shell

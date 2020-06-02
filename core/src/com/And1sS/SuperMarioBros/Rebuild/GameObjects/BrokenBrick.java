@@ -1,13 +1,11 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
-import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -20,31 +18,23 @@ public class BrokenBrick extends GameObject {
 
     float rotationAngle = 0;
 
-    public BrokenBrick(int mapIndxX, int mapIndxY, Level level) {
+    public BrokenBrick(int mapIndxX, int mapIndxY, Level level, Animation animation) {
         this((float) mapIndxX * level.getCellSize(),
                 (float) Gdx.graphics.getHeight() - mapIndxY * level.getCellSize(),
-                level);
+                level, animation);
     }
 
-    private BrokenBrick(float x, float y, Level level) {
+    private BrokenBrick(float x, float y, Level level, Animation animation) {
         super(new Rectangle(x, y, level.getCellSize(), level.getCellSize()),
-                new Animation(level.getObectsTexture(), 64, 16, 16, 16),
-                GameObjectId.BROKEN_BRICK);
+                animation, GameObjectId.BROKEN_BRICK);
 
         int cellSize = level.getCellSize();
         parts = new ArrayList<>();
-        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16),
-                GameObjectId.BROKEN_BRICK_PART));
-        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16),
-                GameObjectId.BROKEN_BRICK_PART));
-        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16),
-                GameObjectId.BROKEN_BRICK_PART));
-        parts.add(new GameObject(new Rectangle(x, y, cellSize, cellSize),
-                new Animation("images/objects.png", 64, 16, 16, 16),
-                GameObjectId.BROKEN_BRICK_PART));
+        Rectangle rect = new Rectangle(x, y, cellSize, cellSize);
+        parts.add(new GameObject(rect, null, GameObjectId.BROKEN_BRICK_PART));
+        parts.add(new GameObject(rect, null, GameObjectId.BROKEN_BRICK_PART));
+        parts.add(new GameObject(rect, null, GameObjectId.BROKEN_BRICK_PART));
+        parts.add(new GameObject(rect, null, GameObjectId.BROKEN_BRICK_PART));
 
         // 0, 1 - going left, rotating left; 2, 3 - opposite
 
@@ -73,7 +63,6 @@ public class BrokenBrick extends GameObject {
                 object.x += object.velocityX * deltaTime;
                 object.velocityY -= Level.GRAVITATIONAL_ACCELERATION * deltaTime;
                 object.y += object.velocityY * deltaTime;
-                object.bounds.set((float) x, (float) y, bounds.getWidth(), bounds.getHeight());
             }
 
             rotationAngle += 1000 * deltaTime;
@@ -86,7 +75,6 @@ public class BrokenBrick extends GameObject {
     }
 
     private class BreakingBricksRenderer implements IRenderable {
-
         @Override
         public void render(SpriteBatch spriteBatch) {
 

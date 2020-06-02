@@ -1,9 +1,10 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
-import java.util.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnemyManager {
 	List<com.And1sS.SuperMarioBros.OldVersion.Enemy> enemies;
@@ -26,17 +27,17 @@ public class EnemyManager {
 
 	public void addEnemy(com.And1sS.SuperMarioBros.OldVersion.Enemy enemy) {
 		enemies.add(enemy);
-	};
+	}
 
-	public void updateEnemies(Level level, Player player) {
+    public void updateEnemies(Level level, Mario mario) {
 		for(int i = 0; i < enemies.size(); i++) {
 			com.And1sS.SuperMarioBros.OldVersion.Enemy enemy = enemies.get(i);
 
 			float distanceToPlayer =
-					Math.abs(enemy.getBody().getX() - player.getBody().getOffsetX());
+					Math.abs(enemy.getBody().getX() - mario.getBody().getOffsetX());
 
 			if(distanceToPlayer <= Gdx.graphics.getWidth()) {
-				enemy.update(level, player);
+				enemy.update(level, mario);
 
 				if(!enemy.getAnim().isLoadedSucessful() || enemy.shouldBeDeleted()) {
 					enemies.remove(enemy);

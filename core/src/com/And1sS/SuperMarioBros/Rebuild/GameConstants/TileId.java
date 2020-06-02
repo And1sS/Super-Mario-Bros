@@ -1,4 +1,4 @@
-package com.And1sS.SuperMarioBros.Rebuild;
+package com.And1sS.SuperMarioBros.Rebuild.GameConstants;
 
 public class TileId {
     public static final int TRANSPARENT_NOT_COLLIDABLE_BLOCK = 0;
@@ -38,4 +38,9 @@ public class TileId {
 
     public static final int BLUE_BRICK_BLOCK_2               = 60;
     public static final int GRAY_BRICK_BLOCK_2               = 61;
+
+    public static final int BROWN_FENCE                      = 81;
+    public static final int BLUE_FENCE                       = 82;
+
+    public static final int NEXT_LEVEL_SIGN                  = 100;
 }

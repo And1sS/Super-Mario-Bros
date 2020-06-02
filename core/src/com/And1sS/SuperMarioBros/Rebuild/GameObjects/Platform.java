@@ -1,10 +1,9 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
-import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,8 +13,8 @@ public class Platform extends com.And1sS.SuperMarioBros.Rebuild.GameObjects.Game
         LEFT_RIGHT, TOP_DOWN
     }
 
-    private float yStart;
-    private float xStart;
+    private final float yStart;
+    private final float xStart;
     private float slidingRange;
 
     private Type type;

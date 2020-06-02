@@ -1,22 +1,23 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
 import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 public class OnScreenController {
-	private Texture buttonAtlas;
+	private final Texture buttonAtlas;
 
-	private Button leftButton;
-	private Button rightButton;
-	private Button bButton;
-	private Button shootButton;
-	private Button pauseButton;
+	private final Button leftButton;
+	private final Button rightButton;
+	private final Button bButton;
+	private final Button shootButton;
+	private final Button pauseButton;
 
-	private int buttonWidth;
-	private int buttonHeight;
+	private final int buttonWidth;
+	private final int buttonHeight;
 
 	public OnScreenController() {
 
@@ -29,7 +30,7 @@ public class OnScreenController {
 		rightButton = new Button(buttonAtlas, new Rectangle(6 * buttonWidth / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(512, 0, -512, 512));
 		bButton = new Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 5 / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(512, 0, 512, 512));
 	    shootButton = new Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 10 / 4, buttonHeight / 20, buttonWidth, buttonHeight), new Rectangle(1536, 0, 512, 512));
-		pauseButton = new Button(buttonAtlas, new Rectangle(Gdx.graphics.getWidth() - buttonWidth * 2 / 3, Gdx.graphics.getHeight() - buttonHeight * 2 / 3, buttonWidth * 2 / 3, buttonHeight * 2 / 3), new Rectangle(1024, 0, 512, 512));
+		pauseButton = new Button(buttonAtlas, new Rectangle(0, Gdx.graphics.getHeight() - buttonHeight * 2 / 3, buttonWidth * 2 / 3, buttonHeight * 2 / 3), new Rectangle(1024, 0, 512, 512));
 	}
 
 	public boolean isLeftPressed() {

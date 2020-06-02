@@ -1,12 +1,12 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Enemy {
-	private com.And1sS.SuperMarioBros.OldVersion.Anim animation;
+	private final com.And1sS.SuperMarioBros.OldVersion.Anim animation;
 
-	private RigidBody body;
+	private final RigidBody body;
 
 	private boolean shouldBeDeleted = false;
 	private boolean died = false;
@@ -22,7 +22,7 @@ public class Enemy {
 		body.setVelocityX(500 * Gdx.graphics.getWidth() / 1920.0f);
 	}
 
-	public void update(Level level, Player p) {
+	public void update(Level level, Mario p) {
 		body.setOnGround(false);
 
 		if(Gdx.graphics.getDeltaTime() < 0.025) {

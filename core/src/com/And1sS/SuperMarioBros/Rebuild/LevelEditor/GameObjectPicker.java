@@ -1,20 +1,36 @@
 package com.And1sS.SuperMarioBros.Rebuild.LevelEditor;
 
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
-import com.And1sS.SuperMarioBros.Rebuild.GameObjects.GameObject;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
-import com.And1sS.SuperMarioBros.Rebuild.TileId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.TileId;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+
 public class GameObjectPicker {
+
+    public interface ILevelSaver {
+        void save();
+    }
+
+    public interface IBackgroundChanger {
+        void changeBackgroundTo(String color);
+    }
+
     private static final int[] AVAILABLE_TILES = {
             TileId.TRANSPARENT_NOT_COLLIDABLE_BLOCK,
             TileId.TRANSPARENT_COLLIDABLE_BLOCK,
@@ -38,43 +54,62 @@ public class GameObjectPicker {
             TileId.SECRET_BLOCK_USED_GREEN,
             TileId.SECRET_BLOCK_EMPTY,
             TileId.SECRET_BLOCK_POWERUP_SUPERMARIO,
+            TileId.BROWN_FENCE,
+            TileId.BLUE_FENCE,
+            TileId.NEXT_LEVEL_SIGN
     };
 
     private static final int[] AVAILABLE_DYNAMIC_OBJECTS = {
             GameObjectId.GOOMBA,
             GameObjectId.COOPA_TROOPA,
+            GameObjectId.FLYING_COOPA_TROOPA,
             GameObjectId.PLATFORM_LEFT_RIGHT,
             GameObjectId.PLATFORM_TOP_DOWN
     };
 
     private static final String TITLE_TILE_SECTION = "Tiles:";
     private static final String TITLE_DYNAMIC_OBJECTS_SECTION = "Dynamic objects:";
+    private static final String TITLE_BACKGROUNDS_SECTION = "Background colors:";
 
     private static final int blocksInRow = 7;
-    private int blocksInColumn;
+    private final int blocksInColumn;
 
-    private static float sectionPaddingPercentage = 0.01f;
-    private static float sectionWidthPercentage = 0.95f;        // sectionWidth = ScreenWidth * sectionWidthPercentage
+    private static final float sectionPaddingPercentage = 0.01f;
+    private static final float sectionWidthPercentage = 0.95f;        // sectionWidth = ScreenWidth * sectionWidthPercentage
+
+    private final ILevelSaver levelSaver;
+    private final IBackgroundChanger backgroundChanger;
 
     public enum PickedObjectType {
-        TILE, STATIC_GAME_OBJECT, DYNAMIC_GAME_OBJECT, NONE
+        TILE, STATIC_GAME_OBJECT, DYNAMIC_GAME_OBJECT, BACKGROUND, NONE
     }
     private PickedObjectType lastPickedObjectType = PickedObjectType.TILE;
 
-    private Rectangle bounds;
-    private Rectangle tileSectionBounds;
-    private Rectangle dynamicGameObjectSectionBounds;
+    private final Rectangle bounds;
+    private final Rectangle tileSectionBounds;
+    private final Rectangle dynamicGameObjectSectionBounds;
+    private final Rectangle backgroundSectionBounds;
 
     private BitmapFont font;
-    private GlyphLayout glyphLayout;
+    private final GlyphLayout glyphLayout;
+
+    private final TextButton saveButton;
+    private final TextButton.TextButtonStyle buttonStyle;
+    private final TextureAtlas textureAtlas;
 
     private int lastPickedTileId = TileId.BROWN_WAVE_BLOCK;
     private int lastPickedGameObjectId = GameObjectId.GOOMBA;
+    private String lastPickedBackground = Level.BLACK;
 
-    private float blockSize;
-    private int sectionPadding;
+    private final float blockSize;
+    private final int sectionPadding;
 
-    public GameObjectPicker(float x, float y, float width, float height) {
+    public GameObjectPicker(float x, float y, float width, float height,
+                            final ILevelSaver levelSaver, final IBackgroundChanger backgroundChanger) {
+        this.levelSaver = levelSaver;
+        this.backgroundChanger = backgroundChanger;
+
+        Stage stage = new Stage();
         font = new BitmapFont(Gdx.files.internal("fonts/whitetext.fnt"));
         font.getData().setScale(0.5f * Gdx.graphics.getWidth() / 1920.0f);
 
@@ -91,15 +126,48 @@ public class GameObjectPicker {
 
         tileSectionBounds = new Rectangle(
                 (1 - sectionWidthPercentage) / 2.0f * width,
-                (1 - sectionWidthPercentage) / 2.0f * width,
+                Gdx.graphics.getHeight()  - (blocksInColumn * blockSize + 2 * sectionPadding)
+                        - (glyphLayout.height + 5 * sectionPadding),
                 sectionWidthPercentage * width,
                 blocksInColumn * blockSize + 2 * sectionPadding);
 
         dynamicGameObjectSectionBounds = new Rectangle(
                 (1 - sectionWidthPercentage) / 2.0f * width,
-                tileSectionBounds.y + tileSectionBounds.height + glyphLayout.height + 10 * sectionPadding,
+                tileSectionBounds.y - (glyphLayout.height + 5 * sectionPadding)
+                        - (blocksInColumn * blockSize + 2 * sectionPadding),
                 sectionWidthPercentage * width,
                 blocksInColumn * blockSize + 2 * sectionPadding);
+
+        backgroundSectionBounds = new Rectangle(
+                (1 - sectionWidthPercentage) / 2.0f * width,
+                dynamicGameObjectSectionBounds.y - (glyphLayout.height + 5 * sectionPadding)
+                        - (blockSize + 2 * sectionPadding),
+                sectionWidthPercentage * width,
+                blockSize + 2 * sectionPadding);
+
+        font = new BitmapFont(Gdx.files.internal("fonts/whitetext.fnt"));
+        font.getData().setScale(0.5f * Gdx.graphics.getWidth() / 1920.0f);
+
+        textureAtlas = new TextureAtlas("ui/ui-gray.atlas");
+        Skin skin = new Skin(textureAtlas);
+        buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = font;
+        buttonStyle.up = skin.getDrawable("button_03");
+        buttonStyle.down = skin.getDrawable("button_01");
+        buttonStyle.pressedOffsetX = 1;
+        buttonStyle.pressedOffsetY = -1;
+        saveButton = new TextButton("Save", buttonStyle);
+        saveButton.setPosition(Gdx.graphics.getWidth() - sectionPadding - sectionWidthPercentage * width / 2.0f, sectionPadding);
+        saveButton.setWidth(sectionWidthPercentage * width / 2.0f);
+        saveButton.setHeight(1.5f * blockSize);
+        saveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                levelSaver.save();
+            }
+        });
+        stage.addActor(saveButton);
+        Gdx.input.setInputProcessor(stage);
     }
 
     public void render(@NotNull SpriteBatch spriteBatch, @NotNull ShapeRenderer shapeRenderer, @NotNull Level level) {
@@ -110,7 +178,13 @@ public class GameObjectPicker {
 
         drawTileSection(spriteBatch, shapeRenderer, level);
         drawDynamicGameObjectSection(spriteBatch, shapeRenderer, level);
+        drawBackgroundSection(spriteBatch, shapeRenderer);
         drawSelectedItemRect(shapeRenderer);
+
+
+        spriteBatch.begin();
+        saveButton.draw(spriteBatch, 1.0f);
+        spriteBatch.end();
     }
 
     public void handleInput() {
@@ -119,42 +193,69 @@ public class GameObjectPicker {
             int y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
             if (insideTileSection(x, y)) {
-                int gridIndxX = (int)((x - bounds.x - tileSectionBounds.x - sectionPadding) / blockSize);
-                int gridIndxY = (int)((y - bounds.y - tileSectionBounds.y - sectionPadding) / blockSize);
+                Point gridIndexes = getSectionPickedCellIndexes(x, y,
+                        tileSectionBounds, AVAILABLE_TILES.length);
 
-                if (gridIndxY * blocksInRow + gridIndxX >= AVAILABLE_TILES.length) {
+                if (gridIndexes == null)
                     return;
-                }
 
                 lastPickedObjectType = PickedObjectType.TILE;
-                lastPickedTileId = AVAILABLE_TILES[gridIndxY * blocksInRow + gridIndxX];
+                lastPickedTileId = AVAILABLE_TILES[gridIndexes.y * blocksInRow + gridIndexes.x];
             } else if (insideDynamicGameObjectSection(x, y)) {
-                int gridIndxX = (int)((x - bounds.x - dynamicGameObjectSectionBounds.x - sectionPadding) / blockSize);
-                int gridIndxY = (int)((y - bounds.y - dynamicGameObjectSectionBounds.y - sectionPadding) / blockSize);
+                Point gridIndexes = getSectionPickedCellIndexes(x, y,
+                        dynamicGameObjectSectionBounds, AVAILABLE_DYNAMIC_OBJECTS.length);
 
-
-                if (gridIndxY * blocksInRow + gridIndxX >= AVAILABLE_DYNAMIC_OBJECTS.length) {
+                if (gridIndexes == null)
                     return;
-                }
 
                 lastPickedObjectType = PickedObjectType.DYNAMIC_GAME_OBJECT;
-                lastPickedGameObjectId = AVAILABLE_DYNAMIC_OBJECTS[gridIndxY * blocksInRow + gridIndxX];
+                lastPickedGameObjectId = AVAILABLE_DYNAMIC_OBJECTS[gridIndexes.y * blocksInRow + gridIndexes.x];
+            } else if (insideBackgroundSectionBounds(x, y)) {
+                TreeMap<String, Color> colorHashMap = Level.COLORS;
+                List<String> colorStrings = new ArrayList<>(colorHashMap.keySet());
+                Point gridIndexes = getSectionPickedCellIndexes(x, y,
+                        dynamicGameObjectSectionBounds, colorStrings.size());
+
+                if (gridIndexes == null)
+                    return;
+
+                lastPickedObjectType = PickedObjectType.BACKGROUND;
+                lastPickedBackground = colorStrings.get(gridIndexes.x);
+                backgroundChanger.changeBackgroundTo(lastPickedBackground);
             }
         }
     }
 
     private boolean insideTileSection(int x, int y) {
-        return x > bounds.x + tileSectionBounds.x + sectionPadding
-                && x < bounds.x + tileSectionBounds.x + tileSectionBounds.width - sectionPadding
-                && y > bounds.y + tileSectionBounds.y + sectionPadding
-                && y < bounds.y + tileSectionBounds.y + tileSectionBounds.height - sectionPadding;
+        return insideSection(x, y, tileSectionBounds);
     }
 
     private boolean insideDynamicGameObjectSection(int x, int y) {
-        return x > bounds.x + dynamicGameObjectSectionBounds.x + sectionPadding
-                && x < bounds.x + dynamicGameObjectSectionBounds.x + dynamicGameObjectSectionBounds.width - sectionPadding
-                && y > bounds.y + dynamicGameObjectSectionBounds.y + sectionPadding
-                && y < bounds.y + dynamicGameObjectSectionBounds.y + dynamicGameObjectSectionBounds.height - sectionPadding;
+        return insideSection(x, y, dynamicGameObjectSectionBounds);
+    }
+
+    private boolean insideBackgroundSectionBounds(int x, int y) {
+        return insideSection(x, y, backgroundSectionBounds);
+    }
+
+    private Point getSectionPickedCellIndexes(int x, int y,
+                                              Rectangle sectionBounds,
+                                              int availableObjectsCount) {
+        int gridIndxX = (int)((x - bounds.x - sectionBounds.x - sectionPadding) / blockSize);
+        int gridIndxY = (int)((y - bounds.y - sectionBounds.y - sectionPadding) / blockSize);
+
+
+        if (gridIndxY * blocksInRow + gridIndxX >= availableObjectsCount) {
+            return null;
+        }
+        return new Point(gridIndxX, gridIndxY);
+    }
+
+    private boolean insideSection(int x, int y, Rectangle sectionBounds) {
+        return x > bounds.x + sectionBounds.x + sectionPadding
+                && x < bounds.x + sectionBounds.x + sectionBounds.width - sectionPadding
+                && y > bounds.y + sectionBounds.y + sectionPadding
+                && y < bounds.y + sectionBounds.y + sectionBounds.height - sectionPadding;
     }
 
     private int indexOf(@NotNull int[] array, int value) {
@@ -195,10 +296,14 @@ public class GameObjectPicker {
                     tilesEnded = true;
                     break;
                 }
-                spriteBatch.draw(level.getTileTextureRegion(AVAILABLE_TILES[i * blocksInRow + j]),
-                        bounds.x + tileSectionBounds.x + j * blockSize + sectionPadding,
-                        bounds.y + tileSectionBounds.y + i * blockSize + sectionPadding,
-                        blockSize, blockSize);
+                TextureRegion region = level.getTileTextureRegion(AVAILABLE_TILES[i * blocksInRow + j]);
+                if (region != null) {
+                    spriteBatch.draw(region,
+                            bounds.x + tileSectionBounds.x + j * blockSize + sectionPadding,
+                            bounds.y + tileSectionBounds.y + i * blockSize + sectionPadding,
+                            blockSize, blockSize);
+                }
+
             }
         }
         glyphLayout.setText(font, TITLE_TILE_SECTION);
@@ -229,6 +334,40 @@ public class GameObjectPicker {
         font.draw(spriteBatch, TITLE_DYNAMIC_OBJECTS_SECTION,
                 bounds.x + dynamicGameObjectSectionBounds.x,
                 bounds.y + dynamicGameObjectSectionBounds.y + 3 * sectionPadding + blocksInColumn * blockSize + glyphLayout.height);
+        spriteBatch.end();
+    }
+
+    private void drawBackgroundSection(@NotNull SpriteBatch spriteBatch, @NotNull ShapeRenderer renderer) {
+        drawSectionFrame(backgroundSectionBounds, renderer);
+
+        TreeMap<String, Color> colorHashMap = Level.COLORS;
+        List<String> colorStrings = new ArrayList<>(colorHashMap.keySet());
+
+        boolean tilesEnded = false;
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (int i = 0; i < blocksInColumn && !tilesEnded; i++) {
+            for(int j = 0; j < blocksInRow; j++) {
+                if (i * blocksInRow + j >= colorStrings.size()) {
+                    tilesEnded = true;
+                    break;
+                }
+
+                renderer.setColor(colorHashMap.get(colorStrings.get(i * blocksInColumn + j)));
+
+                renderer.rect(
+                        bounds.x + backgroundSectionBounds.x + j * blockSize + sectionPadding,
+                        bounds.y + backgroundSectionBounds.y + i * blockSize + sectionPadding,
+                        blockSize, blockSize);
+            }
+        }
+        renderer.end();
+
+        spriteBatch.begin();
+        glyphLayout.setText(font, TITLE_BACKGROUNDS_SECTION);
+        font.draw(spriteBatch, TITLE_BACKGROUNDS_SECTION,
+                bounds.x + backgroundSectionBounds.x,
+                bounds.y + backgroundSectionBounds.y + 3 * sectionPadding
+                        + blockSize + glyphLayout.height);
         spriteBatch.end();
     }
 
@@ -281,6 +420,8 @@ public class GameObjectPicker {
     public int getLastPickedGameObjectId() {
         return lastPickedGameObjectId;
     }
+
+    public String getLastPickedBackground() { return lastPickedBackground; }
 
     public Rectangle getBounds() {
         return bounds;

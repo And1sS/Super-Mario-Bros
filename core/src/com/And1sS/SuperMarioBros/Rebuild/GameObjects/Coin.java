@@ -1,10 +1,9 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.Animation;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
-import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,7 +12,7 @@ public class Coin extends GameObject {
 
     public Coin(int mapIndxX, int mapIndxY, Level level) {
         this(mapIndxX * level.getCellSize(), Gdx.graphics.getHeight() - mapIndxY * level.getCellSize(),
-               level.getCellSize(), level.getCellSize(), level.getObectsTexture());
+               level.getCellSize(), level.getCellSize(), level.getObjectsTexture());
 
         velocityY = 13 * level.getCellSize();
     }

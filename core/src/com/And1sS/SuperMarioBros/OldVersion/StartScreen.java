@@ -1,34 +1,36 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 public class StartScreen implements Screen {
 	private Game game;
 
-	private com.And1sS.SuperMarioBros.OldVersion.Level currentLevel;
+	private final com.And1sS.SuperMarioBros.OldVersion.Level currentLevel;
 
-	private Player player;
+	private final Mario mario;
 
-	private SpriteBatch batch;
+	private final SpriteBatch batch;
 
-	private Texture menuTexture;
-	private Texture startTexture;
+	private final Texture menuTexture;
+	private final Texture startTexture;
 
-	private BitmapFont font;
+	private final BitmapFont font;
 
-	private GlyphLayout glyphLayout;
+	private final GlyphLayout glyphLayout;
 
-	private com.And1sS.SuperMarioBros.OldVersion.Button startButton;
+	private final com.And1sS.SuperMarioBros.OldVersion.Button startButton;
 
-	public StartScreen(Game game) {
-		this.game = game;
-
+	public StartScreen() {
 		currentLevel = Level.loadFromFile("levels/level1.lvl", "images/map.png");
 
-		player = new Player("images/mario.png", 600, 5 * currentLevel.getCellSize(), currentLevel.getCellSize(), currentLevel.getCellSize());
+		mario = new Mario("images/mario.png", 600, 5 * currentLevel.getCellSize(), currentLevel.getCellSize(), currentLevel.getCellSize());
 
 		batch = new SpriteBatch();
 
@@ -61,8 +63,8 @@ public class StartScreen implements Screen {
 
 		batch.begin();
 		currentLevel.drawMapWithOffset(batch, 0, 0,
-				currentLevel.getWidth(), currentLevel.getHeight(), (float) player.getBody().getOffsetX());
-		player.draw(batch);
+				currentLevel.getWidth(), currentLevel.getHeight(), mario.getBody().getOffsetX());
+		mario.draw(batch);
 		batch.draw(menuTexture, Gdx.graphics.getWidth() / 4, (int) textHeight * 8,
 				Gdx.graphics.getWidth() / 2, Gdx.graphics.getWidth() / 4);
 		startButton.draw(batch);

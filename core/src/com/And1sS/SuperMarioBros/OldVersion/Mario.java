@@ -1,17 +1,18 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.glutils.*;
-import java.util.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import java.util.ArrayList;
 
 
-public class Player {
+public class Mario {
 	private com.And1sS.SuperMarioBros.OldVersion.Anim animation;
 
-	private com.And1sS.SuperMarioBros.OldVersion.RigidBody playerBody;
+	private final com.And1sS.SuperMarioBros.OldVersion.RigidBody playerBody;
 	
-	private ArrayList<com.And1sS.SuperMarioBros.OldVersion.Bullet> bullets;
+	private final ArrayList<com.And1sS.SuperMarioBros.OldVersion.Bullet> bullets;
 
 	private boolean movingLeft;
 	private boolean died;
@@ -28,8 +29,8 @@ public class Player {
 	private int lives;
 	private int score;
 
-	public Player(String fileName, float x, float y, int width, int height) {
-		animation = new com.And1sS.SuperMarioBros.OldVersion.Anim(fileName, 3, 81, 32, 16, 16, -1, -1, -1, -1, (double)10 , true);
+	public Mario(String fileName, float x, float y, int width, int height) {
+		animation = new com.And1sS.SuperMarioBros.OldVersion.Anim(fileName, 3, 81, 32, 16, 16, -1, -1, -1, -1, 10, true);
 
 		playerBody = new com.And1sS.SuperMarioBros.OldVersion.RigidBody(x, y, width, height);
 
@@ -73,10 +74,10 @@ public class Player {
 			checkCollision(level, 1);
 
 			playerBody.getBounds().set(
-				(float) playerBody.getX(),
-				(float) playerBody.getY(),
-				(float) playerBody.getWidth(),
-				(float) playerBody.getHeight());
+					playerBody.getX(),
+					playerBody.getY(),
+					playerBody.getWidth(),
+					playerBody.getHeight());
 		}
 
 
@@ -194,7 +195,7 @@ public class Player {
 									if(level.getCell(j, i) == 20) level.setCell(j, i, 21);
 									else level.setCell(j, i, 0);
 
-									com.And1sS.SuperMarioBros.OldVersion.Anim temp = new com.And1sS.SuperMarioBros.OldVersion.Anim("images/objects.png", 4, 0, 96, 16, 16, j * level.getCellSize(), (Gdx.graphics.getHeight() - i * level.getCellSize()), level.getCellSize(), level.getCellSize(), (double)10 , false);
+									com.And1sS.SuperMarioBros.OldVersion.Anim temp = new com.And1sS.SuperMarioBros.OldVersion.Anim("images/objects.png", 4, 0, 96, 16, 16, j * level.getCellSize(), (Gdx.graphics.getHeight() - i * level.getCellSize()), level.getCellSize(), level.getCellSize(), 10, false);
 									temp.setSpeedY(600 * Gdx.graphics.getHeight() / 1080);
 
 									level.addAnim(temp);
@@ -228,7 +229,7 @@ public class Player {
 		} 
 		if(playerBody.getVelocityX() != 0 && playerBody.getVelocityY() == 0) {
 			animation.setTextureX(96);
-			animation.setSpeed((double) 10);
+			animation.setSpeed(10);
 		}
 		if(died) {
 			animation.setTextureX(176);
@@ -356,7 +357,7 @@ public class Player {
 		if(type != MarioType.FIRE_MARIO)
 			return;
 			
-		com.And1sS.SuperMarioBros.OldVersion.Bullet bullet = new com.And1sS.SuperMarioBros.OldVersion.Bullet((float) (playerBody.getX() + playerBody.getWidth() - level.getCellSize()  / 2), (float) (playerBody.getY() + playerBody.getHeight() / 2), level.getCellSize() / 2, level.getCellSize() / 2);
+		com.And1sS.SuperMarioBros.OldVersion.Bullet bullet = new com.And1sS.SuperMarioBros.OldVersion.Bullet(playerBody.getX() + playerBody.getWidth() - level.getCellSize()  / 2, playerBody.getY() + playerBody.getHeight() / 2, level.getCellSize() / 2, level.getCellSize() / 2);
 		
 		if(movingLeft) {
 			bullet.getBody().setVelocityX(-600 * Gdx.graphics.getWidth() / 1920.0f);

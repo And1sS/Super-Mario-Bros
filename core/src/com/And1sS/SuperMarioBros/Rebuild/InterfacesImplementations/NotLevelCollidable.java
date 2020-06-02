@@ -1,7 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations;
 
 import com.And1sS.SuperMarioBros.Rebuild.GameObjects.GameObject;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
+import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Level;
 
 public class NotLevelCollidable implements GameObject.ILevelCollidable {
 

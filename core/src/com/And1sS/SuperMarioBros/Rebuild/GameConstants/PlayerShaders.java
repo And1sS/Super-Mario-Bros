@@ -1,4 +1,4 @@
-package com.And1sS.SuperMarioBros.Rebuild;
+package com.And1sS.SuperMarioBros.Rebuild.GameConstants;
 
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 

@@ -1,8 +1,7 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
-import com.And1sS.SuperMarioBros.Rebuild.TileId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.TileId;
 
 public class BouncingBrownSecretBlock extends BouncingBlock{
     public BouncingBrownSecretBlock(int mapIndxX, int mapIndxY, Level level) {

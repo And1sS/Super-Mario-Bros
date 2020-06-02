@@ -1,19 +1,18 @@
 package com.And1sS.SuperMarioBros.Rebuild.GameObjects;
 
 import com.And1sS.SuperMarioBros.Rebuild.Animation;
-import com.And1sS.SuperMarioBros.Rebuild.GameObjectId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotGameObjectCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotLevelCollidable;
 import com.And1sS.SuperMarioBros.Rebuild.InterfacesImplementations.NotUpdatableAnimation;
-import com.And1sS.SuperMarioBros.Rebuild.Level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
 public class BouncingBlock extends GameObject {
-    private int tileId;
+    private final int tileId;
 
-    private int mapIndxX;
-    private int mapIndxY;
+    private final int mapIndxX;
+    private final int mapIndxY;
 
     public BouncingBlock(int mapIndxX, int mapIndxY, float cellSize, int tileId, Animation animation) {
         super(new Rectangle(mapIndxX * cellSize, Gdx.graphics.getHeight() - (mapIndxY + 1) * cellSize, cellSize, cellSize),

@@ -1,6 +1,6 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
-import com.And1sS.SuperMarioBros.Rebuild.TileId;
+import com.And1sS.SuperMarioBros.Rebuild.GameConstants.TileId;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.io.BufferedReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Level {
 	public static final float GRAVITATIONAL_ACCELERATION = 5000 * Gdx.graphics.getHeight() / 1080;
@@ -17,21 +18,21 @@ public class Level {
 	
 	private int[][] map;
 
-	private int cellSize;
-	private int mapWidth;
-	private int mapHeight;
+	private final int cellSize;
+	private final int mapWidth;
+	private final int mapHeight;
 
 	private double time = TIME;
 	private double currentFrame = 0;
 
-	private TextureRegion currentTile;
+	private final TextureRegion currentTile;
 
 	List <TextureBody> sprites;
 	List <com.And1sS.SuperMarioBros.OldVersion.Anim> animations;
 
-	private com.And1sS.SuperMarioBros.OldVersion.EnemyManager enemies;
+	private final com.And1sS.SuperMarioBros.OldVersion.EnemyManager enemies;
 
-	public Level(int map[][], int cellSize, Texture tiles) {
+	public Level(int[][] map, int cellSize, Texture tiles) {
 		this.map = map;
 		this.cellSize = cellSize;
 
@@ -154,8 +155,8 @@ public class Level {
 
     private void setCurrentTile(int tileId) {
         switch(tileId) {
-            case com.And1sS.SuperMarioBros.Rebuild.TileId.TRANSPARENT_COLLIDABLE_BLOCK:
-            case com.And1sS.SuperMarioBros.Rebuild.TileId.TRANSPARENT_NOT_COLLIDABLE_BLOCK:
+            case TileId.TRANSPARENT_COLLIDABLE_BLOCK:
+            case TileId.TRANSPARENT_NOT_COLLIDABLE_BLOCK:
                 currentTile.setRegion(80, 16, 16, 16);
                 break;
 

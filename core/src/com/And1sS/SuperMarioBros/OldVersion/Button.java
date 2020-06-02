@@ -1,15 +1,16 @@
 package com.And1sS.SuperMarioBros.OldVersion;
 
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Button {
-	private Rectangle bounds;
-	private Rectangle drawableRegion;
+	private final Rectangle bounds;
+	private final Rectangle drawableRegion;
 
-	private Texture texture;
+	private final Texture texture;
 	TextureRegion region;
 
 	public Button(Texture texture, Rectangle bounds, Rectangle drawableRegion) {
@@ -19,7 +20,6 @@ public class Button {
 		this.drawableRegion = drawableRegion;
 
 		region = new TextureRegion(texture);
-
 	}
 
 	public boolean isTouched() {
