@@ -120,6 +120,11 @@ public class Mario extends GameObject {
         }
     }
 
+    public void addCoin() {
+        coins++;
+        score += 100;
+    }
+
     public void respawn(float x, float y) {
         if (lives > 0) {
             flipAnimationXAxis = false;
@@ -262,6 +267,7 @@ public class Mario extends GameObject {
                             case TileId.SECRET_BLOCK_USED_GREEN:
                             case TileId.SECRET_BLOCK_USED_GRAY:
                             case TileId.SECRET_BLOCK_EMPTY:
+                            case TileId.SECRET_BLOCK_POWERUP_SUPERMARIO:
                                 if (velocityX > 0) {
                                     x = j * cellSize - bounds.getWidth() - 0.001;
                                     velocityX = 0;
@@ -327,10 +333,9 @@ public class Mario extends GameObject {
                             case TileId.SECRET_BLOCK_EMPTY:
                                 defaultCollisionY(i, cellSize);
                                 if (y >= (i + 1) * cellSize) {
-                                    score += 100;
-                                    coins += 1;
+                                    addCoin();
                                     level.setCell(j, i, 0);
-                                    level.addObject(new Coin(j, i, level));
+                                    level.addObject(new FadingCoin(j, i, level));
                                     level.addObject(new BouncingBrownSecretBlock(j, i, level));
                                 }
                                 break;

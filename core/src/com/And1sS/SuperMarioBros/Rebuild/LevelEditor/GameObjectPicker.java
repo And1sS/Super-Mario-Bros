@@ -4,6 +4,7 @@ import com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId;
 import com.And1sS.SuperMarioBros.Rebuild.GameConstants.TileId;
 import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Level;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -29,6 +29,17 @@ public class GameObjectPicker {
 
     public interface IBackgroundChanger {
         void changeBackgroundTo(String color);
+    }
+
+    private class Point {
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int x;
+        public int y;
     }
 
     private static final int[] AVAILABLE_TILES = {
@@ -63,8 +74,10 @@ public class GameObjectPicker {
             GameObjectId.GOOMBA,
             GameObjectId.COOPA_TROOPA,
             GameObjectId.FLYING_COOPA_TROOPA,
+            GameObjectId.PIRANA_PLANT,
             GameObjectId.PLATFORM_LEFT_RIGHT,
-            GameObjectId.PLATFORM_TOP_DOWN
+            GameObjectId.PLATFORM_TOP_DOWN,
+            GameObjectId.COLLECTABLE_COIN
     };
 
     private static final String TITLE_TILE_SECTION = "Tiles:";
@@ -104,12 +117,14 @@ public class GameObjectPicker {
     private final float blockSize;
     private final int sectionPadding;
 
+    private final Stage stage;
+
     public GameObjectPicker(float x, float y, float width, float height,
                             final ILevelSaver levelSaver, final IBackgroundChanger backgroundChanger) {
         this.levelSaver = levelSaver;
         this.backgroundChanger = backgroundChanger;
 
-        Stage stage = new Stage();
+        stage = new Stage();
         font = new BitmapFont(Gdx.files.internal("fonts/whitetext.fnt"));
         font.getData().setScale(0.5f * Gdx.graphics.getWidth() / 1920.0f);
 
@@ -167,7 +182,6 @@ public class GameObjectPicker {
             }
         });
         stage.addActor(saveButton);
-        Gdx.input.setInputProcessor(stage);
     }
 
     public void render(@NotNull SpriteBatch spriteBatch, @NotNull ShapeRenderer shapeRenderer, @NotNull Level level) {
@@ -187,42 +201,44 @@ public class GameObjectPicker {
         spriteBatch.end();
     }
 
-    public void handleInput() {
-        if (Gdx.input.justTouched()) {
-            int x = Gdx.input.getX();
-            int y = Gdx.graphics.getHeight() - Gdx.input.getY();
+    public void handleInput(float posX, float posY) {
+        int x = (int) posX;
+        int y = Gdx.graphics.getHeight() - (int) posY;
 
-            if (insideTileSection(x, y)) {
-                Point gridIndexes = getSectionPickedCellIndexes(x, y,
-                        tileSectionBounds, AVAILABLE_TILES.length);
+        if (insideTileSection(x, y)) {
+            Point gridIndexes = getSectionPickedCellIndexes(
+                    x, y, tileSectionBounds,
+                    AVAILABLE_TILES.length,
+                    blocksInRow);
 
-                if (gridIndexes == null)
-                    return;
+            if (gridIndexes == null)
+                return;
 
-                lastPickedObjectType = PickedObjectType.TILE;
-                lastPickedTileId = AVAILABLE_TILES[gridIndexes.y * blocksInRow + gridIndexes.x];
-            } else if (insideDynamicGameObjectSection(x, y)) {
-                Point gridIndexes = getSectionPickedCellIndexes(x, y,
-                        dynamicGameObjectSectionBounds, AVAILABLE_DYNAMIC_OBJECTS.length);
+            lastPickedObjectType = PickedObjectType.TILE;
+            lastPickedTileId = AVAILABLE_TILES[gridIndexes.y * blocksInRow + gridIndexes.x];
+        } else if (insideDynamicGameObjectSection(x, y)) {
+            Point gridIndexes = getSectionPickedCellIndexes(
+                    x, y, dynamicGameObjectSectionBounds,
+                    AVAILABLE_DYNAMIC_OBJECTS.length,
+                    blocksInRow);
 
-                if (gridIndexes == null)
-                    return;
+            if (gridIndexes == null)
+                return;
 
-                lastPickedObjectType = PickedObjectType.DYNAMIC_GAME_OBJECT;
-                lastPickedGameObjectId = AVAILABLE_DYNAMIC_OBJECTS[gridIndexes.y * blocksInRow + gridIndexes.x];
-            } else if (insideBackgroundSectionBounds(x, y)) {
-                TreeMap<String, Color> colorHashMap = Level.COLORS;
-                List<String> colorStrings = new ArrayList<>(colorHashMap.keySet());
-                Point gridIndexes = getSectionPickedCellIndexes(x, y,
-                        dynamicGameObjectSectionBounds, colorStrings.size());
+            lastPickedObjectType = PickedObjectType.DYNAMIC_GAME_OBJECT;
+            lastPickedGameObjectId = AVAILABLE_DYNAMIC_OBJECTS[gridIndexes.y * blocksInRow + gridIndexes.x];
+        } else if (insideBackgroundSectionBounds(x, y)) {
+            TreeMap<String, Color> colorHashMap = Level.COLORS;
+            List<String> colorStrings = new ArrayList<>(colorHashMap.keySet());
+            Point gridIndexes = getSectionPickedCellIndexes(x, y,
+                    dynamicGameObjectSectionBounds, colorStrings.size(), 0);
 
-                if (gridIndexes == null)
-                    return;
+            if (gridIndexes == null)
+                return;
 
-                lastPickedObjectType = PickedObjectType.BACKGROUND;
-                lastPickedBackground = colorStrings.get(gridIndexes.x);
-                backgroundChanger.changeBackgroundTo(lastPickedBackground);
-            }
+            lastPickedObjectType = PickedObjectType.BACKGROUND;
+            lastPickedBackground = colorStrings.get(gridIndexes.x);
+            backgroundChanger.changeBackgroundTo(lastPickedBackground);
         }
     }
 
@@ -240,7 +256,8 @@ public class GameObjectPicker {
 
     private Point getSectionPickedCellIndexes(int x, int y,
                                               Rectangle sectionBounds,
-                                              int availableObjectsCount) {
+                                              int availableObjectsCount,
+                                              int blocksInRow) {
         int gridIndxX = (int)((x - bounds.x - sectionBounds.x - sectionPadding) / blockSize);
         int gridIndxY = (int)((y - bounds.y - sectionBounds.y - sectionPadding) / blockSize);
 
@@ -426,4 +443,6 @@ public class GameObjectPicker {
     public Rectangle getBounds() {
         return bounds;
     }
+
+    public InputProcessor getInputProcessor() { return stage; }
 }

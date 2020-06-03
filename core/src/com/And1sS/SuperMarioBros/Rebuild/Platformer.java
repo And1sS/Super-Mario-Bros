@@ -1,6 +1,5 @@
-package com.And1sS.SuperMarioBros.OldVersion;
+package com.And1sS.SuperMarioBros.Rebuild;
 
-import com.And1sS.SuperMarioBros.Rebuild.GameManager;
 import com.And1sS.SuperMarioBros.Rebuild.GameScreens.StartScreen;
 import com.badlogic.gdx.Game;
 

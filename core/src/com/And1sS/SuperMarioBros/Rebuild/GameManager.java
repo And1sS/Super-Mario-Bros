@@ -2,6 +2,7 @@ package com.And1sS.SuperMarioBros.Rebuild;
 
 import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Level;
 import com.And1sS.SuperMarioBros.Rebuild.GameObjects.Mario;
+import com.And1sS.SuperMarioBros.Rebuild.GameScreens.CongratulationsScreen;
 import com.And1sS.SuperMarioBros.Rebuild.GameScreens.DeathScreen;
 import com.And1sS.SuperMarioBros.Rebuild.GameScreens.GameOverScreen;
 import com.badlogic.gdx.Game;
@@ -122,6 +123,9 @@ public class GameManager implements Mario.ILevelChanger {
     @Override
     public void levelChanged() {
         currentLevel++;
-        restartLevel();
+        if (currentLevel >= levels.size())
+            game.setScreen(new CongratulationsScreen());
+        else
+            restartLevel();
     }
 }

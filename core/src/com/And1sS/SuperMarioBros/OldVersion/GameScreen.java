@@ -2,6 +2,7 @@ package com.And1sS.SuperMarioBros.OldVersion;
 
 
 import com.And1sS.SuperMarioBros.Rebuild.GameManager;
+import com.And1sS.SuperMarioBros.Rebuild.OnScreenController;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -21,7 +22,7 @@ public class GameScreen implements Screen {
 
 	private Level currentLevel;
 
-	private final OnScreenController controller;
+	private final com.And1sS.SuperMarioBros.Rebuild.OnScreenController controller;
 
 	private final Hud hud;
 

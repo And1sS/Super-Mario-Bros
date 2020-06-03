@@ -8,19 +8,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Coin extends GameObject {
+public class FadingCoin extends GameObject {
 
-    public Coin(int mapIndxX, int mapIndxY, Level level) {
+    public FadingCoin(int mapIndxX, int mapIndxY, Level level) {
         this(mapIndxX * level.getCellSize(), Gdx.graphics.getHeight() - mapIndxY * level.getCellSize(),
                level.getCellSize(), level.getCellSize(), level.getObjectsTexture());
 
         velocityY = 13 * level.getCellSize();
     }
 
-    private Coin(float x, float y, float width, float height, Texture objectsTexture) {
+    private FadingCoin(float x, float y, float width, float height, Texture objectsTexture) {
         super(new Rectangle(x, y, width, height),
             new Animation(objectsTexture, 4, 0, 96, 16, 16, 10, false),
-                GameObjectId.COIN);
+                GameObjectId.FADING_COIN);
 
         renderer = new DefaultObjectRenderer();
         updater = new CoinUpdater();

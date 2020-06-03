@@ -269,6 +269,14 @@ public class Level {
             case com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId.PLATFORM_TOP_DOWN:
                 addObject(new Platform(mapIndxX, mapIndxY, this, Platform.Type.TOP_DOWN));
                 break;
+
+            case GameObjectId.COLLECTABLE_COIN:
+                addObject(new CollectableCoin(mapIndxX, mapIndxY, this));
+                break;
+
+            case GameObjectId.PIRANA_PLANT:
+                addObject(new PiranaPlant(mapIndxX, mapIndxY, this));
+                break;
         }
     }
 
@@ -284,6 +292,9 @@ public class Level {
         return enemiesTexture;
     }
 
+    public List<GameObject> getObjects() { return objects; }
+
+    //TODO: move this to texture provider class, rewrite to constant hashmap
     public TextureRegion getTileTextureRegion(int tileId) {
         TextureRegion tileTextureRegion = new TextureRegion(tilesTexture);
         switch(tileId) {
@@ -410,35 +421,45 @@ public class Level {
         return tileTextureRegion;
     }
 
-    // This method is only for level editor, never use it outside editor!
+    //TODO: move this to texture provider class, rewrite to constant hashmap
     public TextureRegion getGameObjectTextureRegion(int gameObjectId) {
         TextureRegion tileTextureRegion = null;
 
         switch (gameObjectId) {
-            case com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId.GOOMBA:
+            case GameObjectId.GOOMBA:
                 tileTextureRegion = new TextureRegion(enemiesTexture);
                 tileTextureRegion.setRegion(0, 16, 16, 16);
                 break;
 
-           case com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId.COOPA_TROOPA:
+           case GameObjectId.COOPA_TROOPA:
                tileTextureRegion = new TextureRegion(enemiesTexture);
                tileTextureRegion.setRegion(96, 7, 16, 25);
                break;
 
-           case com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId.FLYING_COOPA_TROOPA:
+           case GameObjectId.FLYING_COOPA_TROOPA:
                 tileTextureRegion = new TextureRegion(enemiesTexture);
                 tileTextureRegion.setRegion(128, 8, 16, 24);
                 break;
 
-           case com.And1sS.SuperMarioBros.Rebuild.GameConstants.GameObjectId.PLATFORM_LEFT_RIGHT:
+           case GameObjectId.PLATFORM_LEFT_RIGHT:
            case GameObjectId.PLATFORM_TOP_DOWN:
                 tileTextureRegion = new TextureRegion(objectsTexture);
                 tileTextureRegion.setRegion(64, 129, 16, 7);
                 break;
+
+           case GameObjectId.COLLECTABLE_COIN:
+                tileTextureRegion = new TextureRegion(objectsTexture);
+                tileTextureRegion.setRegion(0, 80, 16, 16);
+                break;
+
+           case GameObjectId.PIRANA_PLANT:
+                tileTextureRegion = new TextureRegion(enemiesTexture);
+                tileTextureRegion.setRegion(12 * 16, 8, 16, 24);
         }
         return tileTextureRegion;
     }
 
+    //TODO: rewrite or delete
     public void recalculateObjectsBounds(int newWidth, int newHeight) {
         int oldCellSize = cellSize;
         cellSize = newHeight / mapHeight;
@@ -453,17 +474,17 @@ public class Level {
         Gdx.gl.glClearColor(background.r, background.g, background.b, background.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        int startX = (int) (offsetX) / cellSize;
+        int startY = 0;
+        int width = Gdx.graphics.getWidth() / cellSize + 2;
+        int height = mapHeight;
+
         for (GameObject object : objects) {
             if (Math.abs(object.getX() - offsetX) > Gdx.graphics.getWidth())
                 continue;
             object.setOffsetX(offsetX);
             object.render(spriteBatch);
         }
-
-        int startX = (int) (offsetX) / cellSize;
-        int startY = 0;
-        int width = Gdx.graphics.getWidth() / cellSize + 2;
-        int height = mapHeight;
 
         for(int y = startY; y < startY + height; y++) {
             for(int x = startX; x < startX + width; x++) {

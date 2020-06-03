@@ -90,7 +90,7 @@ public class Goomba extends GameObject {
                     y += bounds.getHeight();
                     bounds.setY((float) y);
                     animation.setSpeed(0);
-                } else if (mario.getType() != Mario.PlayerType.INVINCIBLE_MARIO){
+                } else if (mario.getType() != Mario.PlayerType.INVINCIBLE_MARIO) {
                     mario.resetPowerUps();
                 }
             }

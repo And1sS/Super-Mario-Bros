@@ -73,6 +73,10 @@ public class GameObject {
         return velocityY;
     }
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
     public int getId() {
         return id;
     }
@@ -146,7 +150,7 @@ public class GameObject {
         public void render(SpriteBatch spriteBatch) {
             if (flipAnimationXAxis) {
                 spriteBatch.draw(animation.getCurrentRegion(),
-                        (float) (x + bounds.getWidth() -  offsetX),
+                        (float) (x + bounds.getWidth() - offsetX),
                         (float) y,
                         -bounds.getWidth(), bounds.getHeight());
             } else {

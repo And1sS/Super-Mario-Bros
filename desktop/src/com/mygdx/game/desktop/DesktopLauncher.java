@@ -1,6 +1,6 @@
 package com.mygdx.game.desktop;
 
-import com.And1sS.SuperMarioBros.OldVersion.Platformer;
+import com.And1sS.SuperMarioBros.Rebuild.Platformer;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 

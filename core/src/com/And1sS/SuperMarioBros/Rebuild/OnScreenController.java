@@ -1,5 +1,6 @@
-package com.And1sS.SuperMarioBros.OldVersion;
+package com.And1sS.SuperMarioBros.Rebuild;
 
+import com.And1sS.SuperMarioBros.OldVersion.Button;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
